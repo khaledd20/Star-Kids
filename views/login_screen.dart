@@ -2,13 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
-import 'package:secondserving/views/register_screen.dart';
 import 'package:starkids/services/firebase_auth_service.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+/*
+import 'package:secondserving/views/register_screen.dart';
 import 'package:secondserving/views/share_meal_screen.dart';
 import 'food_shared_screen.dart';
 import 'reportedUsers.dart';
-
+*/
 
 
 
