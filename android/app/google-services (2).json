@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "35723641214",
+    "firebase_url": "https://star-kids-c24da-default-rtdb.firebaseio.com",
+    "project_id": "star-kids-c24da",
+    "storage_bucket": "star-kids-c24da.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35723641214:android:30a76da5798922bf5b332f",
+        "android_client_info": {
+          "package_name": "com.company.starkids"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "35723641214-fvtc3ueq7ltpt34i46e7odk5i3pd1hc4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2khN1TVcF8OxpOZZyTQjw9rjjP_1Q6pY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "35723641214-fvtc3ueq7ltpt34i46e7odk5i3pd1hc4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
