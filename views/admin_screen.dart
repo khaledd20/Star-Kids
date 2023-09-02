@@ -9,7 +9,7 @@ class AdminScreen extends StatefulWidget {
 class _AdminScreenState extends State<AdminScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController userTypeController = TextEditingController();
+  final TextEditingController userroleController = TextEditingController();
 
   // Track the currently edited user document ID
   String? currentlyEditingUserId;
@@ -50,16 +50,17 @@ class _AdminScreenState extends State<AdminScreen> {
                     final userId = user.id;
                     final username = userData['name'] ?? ''; // Updated to 'name'
                     final password = userData['password'] ?? '';
-                    final userType = userData['type'] ?? '';
+                    final userrole = userData['role'] ?? '';
 
                     userWidgets.add(
                       ListTile(
-                        title: Text('Name: $username'), // Updated to 'Name'
+                        title: Text('User ID: $userId'), // Display User ID
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text('Name: $username'), // Updated to 'Name'
                             Text('Password: $password'),
-                            Text('Type: $userType'),
+                            Text('role: $userrole'),
                           ],
                         ),
                         trailing: Row(
@@ -76,7 +77,7 @@ class _AdminScreenState extends State<AdminScreen> {
                                 // Pre-fill the edit form with user data
                                 nameController.text = username;
                                 passwordController.text = password;
-                                userTypeController.text = userType;
+                                userroleController.text = userrole;
                               },
                             ),
                             IconButton(
@@ -113,8 +114,8 @@ class _AdminScreenState extends State<AdminScreen> {
                 decoration: InputDecoration(labelText: 'Password'),
               ),
               TextFormField(
-                controller: userTypeController,
-                decoration: InputDecoration(labelText: 'User Type'),
+                controller: userroleController,
+                decoration: InputDecoration(labelText: 'User role'),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -122,7 +123,7 @@ class _AdminScreenState extends State<AdminScreen> {
                   FirebaseFirestore.instance.collection('Users').doc(currentlyEditingUserId).update({
                     'name': nameController.text, // Updated to 'name'
                     'password': passwordController.text,
-                    'type': userTypeController.text,
+                    'role': userroleController.text,
                   });
 
                   // Clear the input fields and reset the editing state
@@ -130,7 +131,7 @@ class _AdminScreenState extends State<AdminScreen> {
                     currentlyEditingUserId = null;
                     nameController.clear();
                     passwordController.clear();
-                    userTypeController.clear();
+                    userroleController.clear();
                   });
                 },
                 child: Text('Save Changes'),
@@ -149,25 +150,26 @@ class _AdminScreenState extends State<AdminScreen> {
                 decoration: InputDecoration(labelText: 'Password'),
               ),
               TextFormField(
-                controller: userTypeController,
-                decoration: InputDecoration(labelText: 'User Type'),
+                controller: userroleController,
+                decoration: InputDecoration(labelText: 'User role'),
               ),
               ElevatedButton(
-                onPressed: () {
-                  // Add new user to Firestore
-                  FirebaseFirestore.instance.collection('Users').add({
-                    'name': nameController.text, // Updated to 'name'
+                onPressed: () async {
+                  // Add new user to Firestore with an automatically generated ID
+                  await FirebaseFirestore.instance.collection('Users').add({
+                    'name': nameController.text,
                     'password': passwordController.text,
-                    'type': userTypeController.text,
+                    'role': userroleController.text,
                   });
 
                   // Clear the input fields
-                  nameController.clear(); // Updated to 'name'
+                  nameController.clear();
                   passwordController.clear();
-                  userTypeController.clear();
+                  userroleController.clear();
                 },
                 child: Text('Add User'),
               ),
+
             ],
           ),
         ),

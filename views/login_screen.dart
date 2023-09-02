@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'admin_screen.dart';
+import 'moderator_screen.dart';
 import 'normal_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -46,18 +47,25 @@ class LoginScreen extends StatelessWidget {
                     final storedPassword = userData['password'] as String;
 
                     if (password == storedPassword) {
-                      final userType = userData['type'] as String;
+                      final userrole = userData['role'] as String;
 
-                      if (userType == 'admin') {
+                      if (userrole == 'admin') {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => AdminScreen()),
                         );
-                      } else {
+                      } else if (userrole == 'teacher') {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => NormalScreen(user: null),
+                          ),
+                        );
+                      } else if (userrole == 'moderator') {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ModeratorScreen(),
                           ),
                         );
                       }
