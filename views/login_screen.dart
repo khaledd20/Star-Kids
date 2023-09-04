@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'admin_screen.dart';
 import 'moderator_screen.dart';
-import 'normal_screen.dart';
+import 'studentAttendance.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -58,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => NormalScreen(user: null),
+                            builder: (context) => studentAttendance(user: null),
                           ),
                         );
                       } else if (userrole == 'moderator') {

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-class NormalScreen extends StatelessWidget {
+class studentAttendance extends StatelessWidget {
   final User? user;
 
-  NormalScreen({required this.user});
+  studentAttendance({required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -13,13 +13,13 @@ class NormalScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Normal Screen'),
+        title: Text('Attendance Screen'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Welcome to the Normal Screen!'),
+            Text('Welcome to the Attendance Screen!'),
             Text('User: $displayName'), // Display user information with null check
             SizedBox(height: 20),
             QRScannerWidget(), // Add the QR code scanner widget here

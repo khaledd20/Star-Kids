@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'studentAttendance.dart'; // Import the studentAttendance
 
 class ModeratorScreen extends StatefulWidget {
   @override
@@ -17,11 +18,45 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
   // Track the selected class document ID
   String? selectedClassId;
 
+  // Track the old class document ID for each student
+  String? oldClassId;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Moderator Page'),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.navigate_next),
+              title: Text('Go to Normal Screen'),
+              onTap: () {
+                // Close the drawer and navigate to the studentAttendance
+                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => studentAttendance(user: null),
+                ));
+              },
+            ),
+            // Add more menu items as needed
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -74,6 +109,7 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
                                 // Set the currently editing student ID
                                 setState(() {
                                   currentlyEditingStudentId = studentId;
+                                  oldClassId = studentClass; // Track the old class
                                 });
 
                                 // Pre-fill the edit form with student data
@@ -87,6 +123,12 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
                               onPressed: () {
                                 // Delete student from Firestore
                                 FirebaseFirestore.instance.collection('Students').doc(studentId).delete();
+                                // Remove the student's name from the old class
+                                if (oldClassId != null) {
+                                  FirebaseFirestore.instance.collection('Classes').doc(oldClassId).update({
+                                    'students': FieldValue.arrayRemove([studentName]),
+                                  });
+                                }
                               },
                             ),
                           ],
@@ -151,13 +193,20 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
                 },
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // Update student data in Firestore
                   FirebaseFirestore.instance.collection('Students').doc(currentlyEditingStudentId).update({
                     'name': nameController.text,
                     'birthday': birthdayController.text,
                     'class': selectedClassId, // Set the selected class ID
                   });
+
+                  // Remove the student's name from the old class if the class is changed
+                  if (oldClassId != selectedClassId && oldClassId != null) {
+                    FirebaseFirestore.instance.collection('Classes').doc(oldClassId).update({
+                      'students': FieldValue.arrayRemove([nameController.text]),
+                    });
+                  }
 
                   // Update the student's name in the selected class
                   if (selectedClassId != null) {
@@ -173,6 +222,7 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
                     birthdayController.clear();
                     classController.clear();
                     selectedClassId = null;
+                    oldClassId = null; // Reset old class ID
                   });
                 },
                 child: Text('Save Changes'),
