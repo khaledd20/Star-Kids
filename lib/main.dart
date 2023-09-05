@@ -11,6 +11,7 @@ void main() async {
       appId: "1:35723641214:android:30a76da5798922bf5b332f",
       messagingSenderId: "35723641214",
       projectId: "star-kids-c24da",
+
     ),
   );
 

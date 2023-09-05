@@ -1,62 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'studentAttendance.dart'; // Import the studentAttendance
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:ui';
+import 'package:flutter/services.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
-class ModeratorScreen extends StatefulWidget {
+class StudentManagementScreen extends StatefulWidget {
   @override
-  _ModeratorScreenState createState() => _ModeratorScreenState();
+  _StudentManagementScreenState createState() => _StudentManagementScreenState();
 }
 
-class _ModeratorScreenState extends State<ModeratorScreen> {
+class _StudentManagementScreenState extends State<StudentManagementScreen> {
+  final FirebaseStorage storage =
+      FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com/QrCodes');
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController birthdayController = TextEditingController();
   final TextEditingController classController = TextEditingController();
 
-  // Track the currently edited student document ID
   String? currentlyEditingStudentId;
-
-  // Track the selected class document ID
   String? selectedClassId;
-
-  // Track the old class document ID for each student
   String? oldClassId;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Moderator Page'),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.navigate_next),
-              title: Text('Go to Normal Screen'),
-              onTap: () {
-                // Close the drawer and navigate to the studentAttendance
-                Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => studentAttendance(user: null),
-                ));
-              },
-            ),
-            // Add more menu items as needed
-          ],
-        ),
+        title: Text('Student Management'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -65,7 +38,7 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Welcome to the Moderator Page!',
+                'Welcome to the Student Management Page!',
                 style: TextStyle(fontSize: 24),
               ),
               SizedBox(height: 20),
@@ -106,13 +79,11 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
                             IconButton(
                               icon: Icon(Icons.edit),
                               onPressed: () {
-                                // Set the currently editing student ID
                                 setState(() {
                                   currentlyEditingStudentId = studentId;
-                                  oldClassId = studentClass; // Track the old class
+                                  oldClassId = studentClass;
                                 });
 
-                                // Pre-fill the edit form with student data
                                 nameController.text = studentName;
                                 birthdayController.text = studentBirthday;
                                 classController.text = studentClass;
@@ -120,15 +91,14 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
                             ),
                             IconButton(
                               icon: Icon(Icons.delete),
-                              onPressed: () {
-                                // Delete student from Firestore
-                                FirebaseFirestore.instance.collection('Students').doc(studentId).delete();
-                                // Remove the student's name from the old class
+                              onPressed: () async {
                                 if (oldClassId != null) {
-                                  FirebaseFirestore.instance.collection('Classes').doc(oldClassId).update({
+                                  await FirebaseFirestore.instance.collection('Classes').doc(oldClassId!).update({
                                     'students': FieldValue.arrayRemove([studentName]),
                                   });
                                 }
+
+                                await deleteStudentAndQR(studentId, studentName, oldClassId);
                               },
                             ),
                           ],
@@ -194,36 +164,41 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  // Update student data in Firestore
-                  FirebaseFirestore.instance.collection('Students').doc(currentlyEditingStudentId).update({
-                    'name': nameController.text,
-                    'birthday': birthdayController.text,
-                    'class': selectedClassId, // Set the selected class ID
-                  });
+                  if (currentlyEditingStudentId != null) {
+                    final qrCodeImageUrl = await uploadQRCodeImage(currentlyEditingStudentId!);
 
-                  // Remove the student's name from the old class if the class is changed
-                  if (oldClassId != selectedClassId && oldClassId != null) {
-                    FirebaseFirestore.instance.collection('Classes').doc(oldClassId).update({
-                      'students': FieldValue.arrayRemove([nameController.text]),
-                    });
+                    if (qrCodeImageUrl != null) {
+                      await FirebaseFirestore.instance.collection('Students').doc(currentlyEditingStudentId!).update({
+                        'name': nameController.text,
+                        'birthday': birthdayController.text,
+                        'class': selectedClassId,
+                        'photoUrl': qrCodeImageUrl,
+                      });
+
+                      if (oldClassId != selectedClassId && oldClassId != null) {
+                        FirebaseFirestore.instance.collection('Classes').doc(oldClassId!).update({
+                          'students': FieldValue.arrayRemove([nameController.text]),
+                        });
+                      }
+
+                      if (selectedClassId != null) {
+                        FirebaseFirestore.instance.collection('Classes').doc(selectedClassId!).update({
+                          'students': FieldValue.arrayUnion([nameController.text]),
+                        });
+                      }
+
+                      setState(() {
+                        currentlyEditingStudentId = null;
+                        nameController.clear();
+                        birthdayController.clear();
+                        classController.clear();
+                        selectedClassId = null;
+                        oldClassId = null;
+                      });
+                    } else {
+                      print('Error uploading QR code image.');
+                    }
                   }
-
-                  // Update the student's name in the selected class
-                  if (selectedClassId != null) {
-                    FirebaseFirestore.instance.collection('Classes').doc(selectedClassId).update({
-                      'students': FieldValue.arrayUnion([nameController.text]),
-                    });
-                  }
-
-                  // Clear the input fields and reset the editing state
-                  setState(() {
-                    currentlyEditingStudentId = null;
-                    nameController.clear();
-                    birthdayController.clear();
-                    classController.clear();
-                    selectedClassId = null;
-                    oldClassId = null; // Reset old class ID
-                  });
                 },
                 child: Text('Save Changes'),
               ),
@@ -277,25 +252,34 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  // Add new student to Firestore with an automatically generated ID
-                  await FirebaseFirestore.instance.collection('Students').add({
+                  final newStudentDocRef = await FirebaseFirestore.instance.collection('Students').add({
                     'name': nameController.text,
                     'birthday': birthdayController.text,
-                    'class': selectedClassId, // Set the selected class ID
+                    'class': selectedClassId,
                   });
 
-                  // Update the student's name in the selected class
-                  if (selectedClassId != null) {
-                    FirebaseFirestore.instance.collection('Classes').doc(selectedClassId).update({
-                      'students': FieldValue.arrayUnion([nameController.text]),
-                    });
-                  }
+                  if (newStudentDocRef != null) {
+                    final qrCodeImageUrl = await uploadQRCodeImage(newStudentDocRef.id);
 
-                  // Clear the input fields
-                  nameController.clear();
-                  birthdayController.clear();
-                  classController.clear();
-                  selectedClassId = null;
+                    if (qrCodeImageUrl != null) {
+                      await newStudentDocRef.update({'photoUrl': qrCodeImageUrl});
+                    } else {
+                      print('Error uploading QR code image for the new student.');
+                    }
+
+                    if (selectedClassId != null) {
+                      FirebaseFirestore.instance.collection('Classes').doc(selectedClassId!).update({
+                        'students': FieldValue.arrayUnion([nameController.text]),
+                      });
+                    }
+
+                    nameController.clear();
+                    birthdayController.clear();
+                    classController.clear();
+                    selectedClassId = null;
+                  } else {
+                    print('Error adding new student to Firestore.');
+                  }
                 },
                 child: Text('Add Student'),
               ),
@@ -304,5 +288,75 @@ class _ModeratorScreenState extends State<ModeratorScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> deleteQRCodeImage(String studentId) async {
+    try {
+      final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
+      await storageRef.delete();
+    } catch (e) {
+      print('Error deleting QR code image: $e');
+    }
+  }
+
+  Future<String?> uploadQRCodeImage(String studentId) async {
+    try {
+      final qrImageData = await generateQRCode(studentId);
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/$studentId.png');
+      await file.writeAsBytes(qrImageData);
+
+      final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
+
+      await storageRef.putFile(file);
+
+      final String url = await storageRef.getDownloadURL();
+
+      return url;
+    } catch (e) {
+      print('Error generating/uploading QR code image: $e');
+      return null;
+    }
+  }
+
+  Future<Uint8List> generateQRCode(String studentId) async {
+    final qrCode = QrPainter(
+      data: studentId,
+      version: QrVersions.auto,
+      errorCorrectionLevel: QrErrorCorrectLevel.L,
+      color: Color(0xff000000),
+      emptyColor: Color(0xffffffff),
+    );
+
+    final size = 300.0;
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder, Rect.fromPoints(Offset(0, 0), Offset(size, size)));
+
+    qrCode.paint(canvas, Rect.fromPoints(Offset(0, 0), Offset(size, size)).size);
+
+    final picture = recorder.endRecording();
+    final img = await picture.toImage(size.toInt(), size.toInt());
+    final imgData = await img.toByteData(format: ImageByteFormat.png);
+
+    return imgData!.buffer.asUint8List();
+  }
+
+  Future<void> deleteStudentAndQR(String studentId, String studentName, String? oldClassId) async {
+    try {
+      // Delete the student document
+      await FirebaseFirestore.instance.collection('Students').doc(studentId).delete();
+
+      // Delete the QR code image
+      await deleteQRCodeImage(studentId);
+
+      // If the student was associated with a class, remove the student's name from the class document
+      if (oldClassId != null) {
+        await FirebaseFirestore.instance.collection('Classes').doc(oldClassId).update({
+          'students': FieldValue.arrayRemove([studentName]),
+        });
+      }
+    } catch (e) {
+      print('Error deleting student and QR code: $e');
+    }
   }
 }

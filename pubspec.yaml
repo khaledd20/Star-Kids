@@ -40,6 +40,10 @@ dependencies:
   firebase_auth: ^4.9.0
   cloud_firestore: ^4.9.1
   qr_code_scanner: ^1.0.1
+  qr_flutter: ^4.1.0
+  firebase_storage: ^11.2.6
+  path_provider: ^2.1.1
+  qr_image_generator: ^0.2.8
 
 dev_dependencies:
   flutter_test:
