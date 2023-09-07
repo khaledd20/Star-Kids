@@ -32,7 +32,7 @@ class ModeratorScreen extends StatelessWidget {
                 // Close the drawer and navigate to the studentAttendance
                 Navigator.pop(context);
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => studentAttendance(user: null),
+                  builder: (context) => StudentAttendanceScreen(user: null),
                 ));
               },
             ),

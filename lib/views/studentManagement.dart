@@ -54,63 +54,75 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                   }
 
                   final students = snapshot.data!.docs;
-                  List<Widget> studentWidgets = [];
 
-                  for (var student in students) {
-                    final studentData = student.data() as Map<String, dynamic>;
-                    final studentId = student.id;
-                    final studentName = studentData['name'] ?? '';
-                    final studentBirthday = studentData['birthday'] ?? '';
-                    final studentClass = studentData['class'] ?? '';
+                  return Column(
+                    children: students.map((student) {
+                      final studentData = student.data() as Map<String, dynamic>;
+                      final studentId = student.id;
+                      final studentName = studentData['name'] ?? '';
+                      final studentBirthday = studentData['birthday'] ?? '';
+                      final studentClass = studentData['class'] ?? '';
 
-                    studentWidgets.add(
-                      ListTile(
-                        title: Text('Name: $studentName'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Birthday: $studentBirthday'),
-                            Text('Class: $studentClass'),
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                setState(() {
-                                  currentlyEditingStudentId = studentId;
-                                  oldClassId = studentClass;
-                                });
-
-                                nameController.text = studentName;
-                                birthdayController.text = studentBirthday;
-                                classController.text = studentClass;
-                              },
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Card(
+                          child: ListTile(
+                            title: Text('Name: $studentName'),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Birthday: $studentBirthday'),
+                                Text('Class: $studentClass'),
+                              ],
                             ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () async {
-                                if (oldClassId != null) {
-                                  await FirebaseFirestore.instance.collection('Classes').doc(oldClassId!).update({
-                                    'students': FieldValue.arrayRemove([studentName]),
-                                  });
-                                }
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                FutureBuilder<String?>(
+                                  future: uploadQRCodeImage(studentId),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+                                      return Image.network(
+                                        snapshot.data!,
+                                        width: 50, // Adjust the size as needed
+                                        height: 50,
+                                      );
+                                    } else {
+                                      return CircularProgressIndicator();
+                                    }
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () {
+                                    setState(() {
+                                      currentlyEditingStudentId = studentId;
+                                      oldClassId = studentClass;
+                                    });
 
-                                await deleteStudentAndQR(studentId, studentName, oldClassId);
-                              },
+                                    nameController.text = studentName;
+                                    birthdayController.text = studentBirthday;
+                                    classController.text = studentClass;
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () async {
+                                    if (oldClassId != null) {
+                                      await FirebaseFirestore.instance.collection('Classes').doc(oldClassId!).update({
+                                        'students': FieldValue.arrayRemove([studentName]),
+                                      });
+                                    }
+
+                                    await deleteStudentAndQR(studentId, studentName, oldClassId);
+                                  },
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    );
-                  }
-
-                  return ListView(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    children: studentWidgets,
+                      );
+                    }).toList(),
                   );
                 },
               ),

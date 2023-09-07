@@ -58,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => studentAttendance(user: null),
+                            builder: (context) => StudentAttendanceScreen(user: null),
                           ),
                         );
                       } else if (userrole == 'moderator') {
