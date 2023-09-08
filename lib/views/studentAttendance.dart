@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentAttendanceScreen extends StatefulWidget {
   final User? user;
@@ -13,9 +13,13 @@ class StudentAttendanceScreen extends StatefulWidget {
 }
 
 class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
-  final List<String> attendedStudents = [];
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   late QRViewController controller;
+
+  String selectedClass = "kg1"; // Default class selection
+  String scanResultMessage = ''; // Message to show after scanning
+  bool isScanningEnabled = true; // Control flag for scanning frequency
+  Set<String> attendedStudents = {}; // Use a Set to store attended student names
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +51,31 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
                   Expanded(
                     flex: 1,
                     child: Center(
-                      child: Text("Scan a QR code"),
+                      child: Text(scanResultMessage),
                     ),
                   ),
                 ],
               ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Choose Class:',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            DropdownButton<String>(
+              value: selectedClass,
+              onChanged: (newValue) {
+                setState(() {
+                  selectedClass = newValue!;
+                });
+              },
+              items: <String>['kg1', 'kg2', 'pre-kg']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
             SizedBox(height: 20),
             Text(
@@ -63,7 +87,7 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
                 itemCount: attendedStudents.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(attendedStudents[index] ?? ''),
+                    title: Text(attendedStudents.elementAt(index) ?? ''),
                   );
                 },
               ),
@@ -79,24 +103,45 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
     controller.scannedDataStream.listen((scanData) async {
       final scannedData = scanData.code;
 
-      if (scannedData != null) {
+      if (isScanningEnabled && scannedData != null) {
+        isScanningEnabled = false; // Disable scanning temporarily
+
         final studentName = await getStudentNameFromFirestore(scannedData);
         if (studentName != null) {
-          setState(() {
-            attendedStudents.add(studentName);
-          });
           final studentClass = await getStudentClassFromFirestore(scannedData);
           if (studentClass != null) {
-            await updateAttendanceRecord(studentClass, studentName);
+            if (studentClass == selectedClass) {
+              if (!await isStudentAlreadyMarked(studentName)) {
+                attendedStudents.add(studentName); // Update the attended students list
+                await markAttendance(selectedClass, studentName);
+                setState(() {
+                  scanResultMessage = "Scanned Successfully";
+                });
+              } else {
+                setState(() {
+                  scanResultMessage = "Already Scanned";
+                });
+              }
+            } else {
+              setState(() {
+                scanResultMessage = "Wrong Class";
+              });
+            }
           }
         }
+
+        // Enable scanning after a delay of 2 seconds
+        Future.delayed(Duration(seconds: 2), () {
+          isScanningEnabled = true;
+        });
       }
     });
   }
 
   Future<String?> getStudentNameFromFirestore(String studentId) async {
     try {
-      final studentDoc = await FirebaseFirestore.instance.collection('Students').doc(studentId).get();
+      final studentDoc =
+          await FirebaseFirestore.instance.collection('Students').doc(studentId).get();
       if (studentDoc.exists) {
         final studentData = studentDoc.data() as Map<String, dynamic>;
         final studentName = studentData['name'] as String?;
@@ -110,7 +155,8 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
 
   Future<String?> getStudentClassFromFirestore(String studentId) async {
     try {
-      final studentDoc = await FirebaseFirestore.instance.collection('Students').doc(studentId).get();
+      final studentDoc =
+          await FirebaseFirestore.instance.collection('Students').doc(studentId).get();
       if (studentDoc.exists) {
         final studentData = studentDoc.data() as Map<String, dynamic>;
         final studentClass = studentData['class'] as String?;
@@ -122,27 +168,67 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
     return null;
   }
 
-  Future<void> updateAttendanceRecord(String studentClass, String studentName) async {
+  Future<void> markAttendance(String selectedClass, String studentName) async {
     final currentDate = DateTime.now();
     final formattedDate = '${currentDate.year}-${currentDate.month}-${currentDate.day}';
 
-    final attendanceDocRef = FirebaseFirestore.instance.collection('Attendance').doc(studentClass);
+    final attendanceDocRef =
+        FirebaseFirestore.instance.collection('Attendance').doc(formattedDate);
+
+    final existingData = await attendanceDocRef.get();
+
+    final studentAttendanceData = {
+      'studentName': studentName,
+      'status': 'present',
+    };
+
+    if (existingData.exists) {
+      final updatedData = existingData.data() as Map<String, dynamic>;
+
+      // Ensure that the selected class subcollection exists
+      if (!updatedData.containsKey(selectedClass)) {
+        updatedData[selectedClass] = {
+          'attendanceData': [studentAttendanceData],
+        };
+      } else {
+        final classAttendanceData = updatedData[selectedClass]['attendanceData'] as List<dynamic>;
+        classAttendanceData.add(studentAttendanceData);
+      }
+
+      await attendanceDocRef.update(updatedData);
+    } else {
+      // Create a new attendance record for the selected date
+      final newAttendanceData = {
+        selectedClass: {
+          'attendanceData': [studentAttendanceData],
+        },
+      };
+
+      await attendanceDocRef.set(newAttendanceData);
+    }
+  }
+
+  Future<bool> isStudentAlreadyMarked(String studentName) async {
+    final currentDate = DateTime.now();
+    final formattedDate = '${currentDate.year}-${currentDate.month}-${currentDate.day}';
+
+    final attendanceDocRef =
+        FirebaseFirestore.instance.collection('Attendance').doc(formattedDate);
 
     final existingData = await attendanceDocRef.get();
 
     if (existingData.exists) {
       final updatedData = existingData.data() as Map<String, dynamic>;
-      final attendanceList = updatedData[formattedDate] as List<dynamic>? ?? [];
-      attendanceList.add(studentName);
 
-      await attendanceDocRef.update({
-        formattedDate: attendanceList,
-      });
-    } else {
-      await attendanceDocRef.set({
-        formattedDate: [studentName],
-      });
+      if (updatedData.containsKey(selectedClass)) {
+        final classAttendanceData = updatedData[selectedClass]['attendanceData'] as List<dynamic>;
+
+        // Check if the student name is already present in the attendance data
+        return classAttendanceData.any((entry) => entry['studentName'] == studentName);
+      }
     }
+
+    return false;
   }
 
   @override
