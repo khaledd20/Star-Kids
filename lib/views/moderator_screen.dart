@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_flutter_project/views/Installments.dart';
 import 'studentAttendance.dart'; // Import the studentAttendance
 import 'studentManagement.dart'; // Import the StudentManagementScreen
 
@@ -27,7 +28,7 @@ class ModeratorScreen extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.navigate_next),
-              title: Text('Go to Normal Screen'),
+              title: Text('Attendance'),
               onTap: () {
                 // Close the drawer and navigate to the studentAttendance
                 Navigator.pop(context);
@@ -44,6 +45,17 @@ class ModeratorScreen extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => StudentManagementScreen(),
+                ));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.payment_sharp), // Icon for Student Management
+              title: Text('Finance'), // Text for Student Management
+              onTap: () {
+                // Close the drawer and navigate to the StudentManagementScreen
+                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => InstallmentsScreen(),
                 ));
               },
             ),
