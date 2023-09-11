@@ -44,6 +44,8 @@ dependencies:
   firebase_storage: ^11.2.6
   path_provider: ^2.1.1
   qr_image_generator: ^0.2.8
+  pdf: ^3.10.4
+  printing: ^5.11.0
 
 dev_dependencies:
   flutter_test:

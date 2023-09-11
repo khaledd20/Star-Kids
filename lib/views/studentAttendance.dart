@@ -3,6 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'Installments.dart';
+import 'login_screen.dart';
+import 'studentAdd.dart';
+
 class StudentAttendanceScreen extends StatefulWidget {
   final User? user;
 
@@ -28,6 +32,68 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Attendance Screen'),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Moderator Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.navigate_next),
+              title: Text('Attendance'),
+              onTap: () {
+                // Close the drawer and navigate to the studentAttendance
+                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => StudentAttendanceScreen(user: null),
+                ));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.manage_accounts), // Icon for Student Management
+              title: Text('Student Add'), // Text for Student Management
+              onTap: () {
+                // Close the drawer and navigate to the StudentAddingScreen
+                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => StudentAddingScreen(),
+                ));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.payment_sharp), // Icon for Student Management
+              title: Text('Finance'), // Text for Student Management
+              onTap: () {
+                // Close the drawer and navigate to the StudentManagementScreen
+                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => InstallmentsScreen(),
+                ));
+              },
+            ),
+            ListTile(
+              title: Text('Log Out'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                    ),
+                  );
+              },
+            ),
+          ],
+        ),
       ),
       body: Center(
         child: Column(

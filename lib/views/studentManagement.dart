@@ -8,6 +8,11 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
+import 'archievedStudents.dart';
+import 'financeReport.dart';
+import 'login_screen.dart';
+import 'userManagement.dart';
+
 class StudentManagementScreen extends StatefulWidget {
   @override
   _StudentManagementScreenState createState() => _StudentManagementScreenState();
@@ -50,6 +55,80 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Student Management'),
+        
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Admin Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              title: Text('User Managemnet Screen'),
+              onTap: () {
+                // Navigate to the ModeratorScreen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => userManagementScreen(),
+                    ),
+                  );
+              },
+            ),
+            ListTile(
+              title: Text('Student Management Screen'),
+              onTap: () {
+                // Navigate to the ModeratorScreen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => StudentManagementScreen(),
+                    ),
+                  );
+              },
+            ),
+            ListTile(
+              title: Text('Finance report'),
+              onTap: () {
+                // Navigate to the ModeratorScreen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => FinanceReportScreen(),
+                    ),
+                  );
+              },
+            ),
+            ListTile(
+              title: Text('Archived Students'),
+              onTap: () {
+                // Navigate to the ModeratorScreen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ArchivedStudentsScreen(),
+                    ),
+                  );
+              },
+            ),
+            ListTile(
+              title: Text('Log Out'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                    ),
+                  );
+              },
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -155,6 +234,12 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                                       }
 
                                       await deleteStudentAndQR(studentId, studentName);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.archive), // Add the Archive icon here
+                                    onPressed: () async {
+                                      await archiveStudent(studentId, studentData); // Archive the student
                                     },
                                   ),
                                 ],
@@ -410,6 +495,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
       ),
     );
   }
+ 
 
   Future<void> deleteQRCodeImage(String studentId) async {
     try {
@@ -485,4 +571,22 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
       print('Error deleting student and QR code: $e');
     }
   }
+  Future<void> archiveStudent(String studentId, Map<String, dynamic> studentData) async {
+  try {
+    // Create a reference to the "Archived" collection
+    final archivedCollection = FirebaseFirestore.instance.collection('Archived');
+
+    // Add the student data to the "Archived" collection
+    await archivedCollection.doc(studentId).set(studentData);
+
+    // Delete the student from the "Students" collection
+    await FirebaseFirestore.instance.collection('Students').doc(studentId).delete();
+
+    // Delete the QR code image
+    await deleteQRCodeImage(studentId);
+  } catch (e) {
+    print('Error archiving student: $e');
+  }
+}
+
 }

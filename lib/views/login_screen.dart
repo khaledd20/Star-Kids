@@ -14,6 +14,7 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Login Page'),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(
@@ -52,7 +53,7 @@ class LoginScreen extends StatelessWidget {
                       if (userrole == 'admin') {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => AdminScreen()),
+                          MaterialPageRoute(builder: (context) => adminScreen()),
                         );
                       } else if (userrole == 'teacher') {
                         Navigator.pushReplacement(

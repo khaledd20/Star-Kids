@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_flutter_project/views/Installments.dart';
+import 'login_screen.dart';
+import 'studentAdd.dart';
 import 'studentAttendance.dart'; // Import the studentAttendance
 import 'studentManagement.dart'; // Import the StudentManagementScreen
 
@@ -19,7 +21,7 @@ class ModeratorScreen extends StatelessWidget {
                 color: Colors.blue,
               ),
               child: Text(
-                'Menu',
+                'Moderator Menu',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -39,12 +41,12 @@ class ModeratorScreen extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.manage_accounts), // Icon for Student Management
-              title: Text('Student Management'), // Text for Student Management
+              title: Text('Student Add'), // Text for Student Management
               onTap: () {
-                // Close the drawer and navigate to the StudentManagementScreen
+                // Close the drawer and navigate to the StudentAddingScreen
                 Navigator.pop(context);
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => StudentManagementScreen(),
+                  builder: (context) => StudentAddingScreen(),
                 ));
               },
             ),
@@ -59,7 +61,16 @@ class ModeratorScreen extends StatelessWidget {
                 ));
               },
             ),
-            // Add more menu items as needed
+            ListTile(
+              title: Text('Log Out'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                    ),
+                  );
+              },
+            ),
           ],
         ),
       ),
