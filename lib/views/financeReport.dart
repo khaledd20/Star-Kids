@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'archievedStudents.dart';
+import 'attendanceReport.dart';
 import 'login_screen.dart';
 import 'studentManagement.dart';
 import 'userManagement.dart';
@@ -68,6 +69,17 @@ class _FinanceReportScreenState extends State<FinanceReportScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FinanceReportScreen(),
+                    ),
+                  );
+              },
+            ),
+            ListTile(
+              title: Text('Attendance report'),
+              onTap: () {
+                // Navigate to the ModeratorScreen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AttendanceReportScreen(),
                     ),
                   );
               },

@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 import 'archievedStudents.dart';
+import 'attendanceReport.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
 import 'userManagement.dart';
@@ -102,6 +103,17 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FinanceReportScreen(),
+                    ),
+                  );
+              },
+            ),
+            ListTile(
+              title: Text('Attendance report'),
+              onTap: () {
+                // Navigate to the ModeratorScreen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AttendanceReportScreen(),
                     ),
                   );
               },

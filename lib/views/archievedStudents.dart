@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'attendanceReport.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
 import 'studentManagement.dart';
@@ -58,6 +58,17 @@ class ArchivedStudentsScreen extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FinanceReportScreen(),
+                    ),
+                  );
+              },
+            ),
+            ListTile(
+              title: Text('Attendance report'),
+              onTap: () {
+                // Navigate to the ModeratorScreen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AttendanceReportScreen(),
                     ),
                   );
               },
