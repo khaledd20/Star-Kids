@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_flutter_project/views/Installments.dart';
+import 'Installments.dart';
 import 'login_screen.dart';
 import 'studentAdd.dart';
 import 'studentAttendance.dart'; // Import the studentAttendance

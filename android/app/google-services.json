@@ -15,6 +15,43 @@
       },
       "oauth_client": [
         {
+          "client_id": "35723641214-uqn5bcp0c85tltokahpt6es2k674756s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.starkids",
+            "certificate_hash": "4f92e464d174c86fb44bacbb5caf71166aadda6e"
+          }
+        },
+        {
+          "client_id": "35723641214-fvtc3ueq7ltpt34i46e7odk5i3pd1hc4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2khN1TVcF8OxpOZZyTQjw9rjjP_1Q6pY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "35723641214-fvtc3ueq7ltpt34i46e7odk5i3pd1hc4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35723641214:android:a6cae971c9822a6d5b332f",
+        "android_client_info": {
+          "package_name": "com.example.my_flutter_project"
+        }
+      },
+      "oauth_client": [
+        {
           "client_id": "35723641214-fvtc3ueq7ltpt34i46e7odk5i3pd1hc4.apps.googleusercontent.com",
           "client_type": 3
         }

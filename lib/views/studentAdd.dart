@@ -1,11 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'dart:ui';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 import 'Installments.dart';
 import 'login_screen.dart';
@@ -13,22 +14,31 @@ import 'studentAttendance.dart';
 
 class StudentAddingScreen extends StatefulWidget {
   @override
-  _StudentAddingScreenState createState() =>
-      _StudentAddingScreenState();
+  _StudentAddingScreenState createState() => _StudentAddingScreenState();
 }
 
 class _StudentAddingScreenState extends State<StudentAddingScreen> {
+
+  final FirebaseStorage storage =
+      FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com/QrCodes');
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController birthdayController = TextEditingController();
   final TextEditingController classController = TextEditingController();
   final TextEditingController feesController = TextEditingController();
   final TextEditingController feesLeftController = TextEditingController();
   final TextEditingController installmentsController = TextEditingController();
-  final TextEditingController installmentsLeftController =
-      TextEditingController();
+  final TextEditingController installmentsLeftController = TextEditingController();
+  final TextEditingController fatherController = TextEditingController();
+  final TextEditingController fatherPhoneController = TextEditingController();
+  final TextEditingController motherController = TextEditingController();
+  final TextEditingController motherPhoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController nearbyPhone1Controller = TextEditingController();
+  final TextEditingController nearbyPhone2Controller = TextEditingController();
 
-  String? selectedClassId;
   DateTime? selectedDate;
+  String? selectedClassId;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime picked = (await showDatePicker(
@@ -49,7 +59,7 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Student Adding'),
+        title: Text('Student Management'),
       ),
       drawer: Drawer(
         child: ListView(
@@ -120,7 +130,7 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Welcome to the Student Adding Page!',
+                'Welcome to the Student Management Page!',
                 style: TextStyle(fontSize: 24),
               ),
               SizedBox(height: 20),
@@ -129,8 +139,9 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               StreamBuilder<QuerySnapshot>(
-                stream:
-                    FirebaseFirestore.instance.collection('Students').snapshots(),
+                stream: FirebaseFirestore.instance
+                    .collection('Students')
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return CircularProgressIndicator();
@@ -147,11 +158,19 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                       final studentBirthday = studentData['birthday'] ?? '';
                       final studentClass = studentData['class'] ?? '';
                       final studentFees = studentData['fees'] ?? '';
-                      final studentFeesLeft = studentData['feesLeft'] ?? '';
+                      final studentFeesLeft =
+                          studentData['feesLeft'] ?? '';
                       final studentInstallments =
                           studentData['installments'] ?? '';
                       final studentInstallmentsLeft =
                           studentData['installmentsLeft'] ?? '';
+                      final father = studentData['father'] ?? '';
+                      final fatherPhone = studentData['fatherPhone'] ?? '';
+                      final mother = studentData['mother'] ?? '';
+                      final motherPhone = studentData['motherPhone'] ?? '';
+                      final address = studentData['address'] ?? '';
+                      final nearbyPhone1 = studentData['nearbyPhone1'] ?? '';
+                      final nearbyPhone2 = studentData['nearbyPhone2'] ?? '';
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -172,12 +191,47 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                                 title: Text('Fees Left: $studentFeesLeft'),
                               ),
                               ListTile(
-                                title:
-                                    Text('Installments: $studentInstallments'),
+                                title: Text('Installments: $studentInstallments'),
                               ),
                               ListTile(
-                                title: Text(
-                                    'Installments Left: $studentInstallmentsLeft'),
+                                title: Text('Installments Left: $studentInstallmentsLeft'),
+                              ),
+                              ListTile(
+                                title: Text("Father's Name: $father"),
+                              ),
+                              ListTile(
+                                title: Text("Father's Phone: $fatherPhone"),
+                              ),
+                              ListTile(
+                                title: Text("Mother's Name: $mother"),
+                              ),
+                              ListTile(
+                                title: Text("Mother's Phone: $motherPhone"),
+                              ),
+                              ListTile(
+                                title: Text("Address: $address"),
+                              ),
+                              ListTile(
+                                title: Text('Nearby Phone 1: $nearbyPhone1'),
+                              ),
+                              ListTile(
+                                title: Text('Nearby Phone 2: $nearbyPhone2'),
+                              ),
+                              FutureBuilder<String?>(
+                                future: uploadQRCodeImage(studentId),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                          ConnectionState.done &&
+                                      snapshot.data != null) {
+                                    return Image.network(
+                                      snapshot.data!,
+                                      width: 50, // Adjust the size as needed
+                                      height: 50,
+                                    );
+                                  } else {
+                                    return CircularProgressIndicator();
+                                  }
+                                },
                               ),
                             ],
                           ),
@@ -204,41 +258,6 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                     decoration: InputDecoration(labelText: 'Birthday'),
                     onTap: () => _selectDate(context), // Show date picker when tapped
                   ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('Classes').snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return CircularProgressIndicator();
-                      }
-
-                      final classes = snapshot.data!.docs;
-                      List<DropdownMenuItem<String>> classDropdownItems = [];
-
-                      for (var classDoc in classes) {
-                        final classData = classDoc.data() as Map<String, dynamic>;
-                        final className = classData['name'] ?? '';
-                        final classId = classDoc.id;
-
-                        classDropdownItems.add(
-                          DropdownMenuItem<String>(
-                            value: classId,
-                            child: Text(className),
-                          ),
-                        );
-                      }
-
-                      return DropdownButtonFormField<String>(
-                        decoration: InputDecoration(labelText: 'Class'),
-                        value: selectedClassId,
-                        items: classDropdownItems,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedClassId = value;
-                          });
-                        },
-                      );
-                    },
-                  ),
                   TextFormField(
                     controller: feesController,
                     decoration: InputDecoration(labelText: 'Fees'),
@@ -259,6 +278,34 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                     decoration: InputDecoration(labelText: 'Installments Left'),
                     keyboardType: TextInputType.number,
                   ),
+                  TextFormField(
+                    controller: fatherController,
+                    decoration: InputDecoration(labelText: "Father's Name"),
+                  ),
+                  TextFormField(
+                    controller: fatherPhoneController,
+                    decoration: InputDecoration(labelText: "Father's Phone"),
+                  ),
+                  TextFormField(
+                    controller: motherController,
+                    decoration: InputDecoration(labelText: "Mother's Name"),
+                  ),
+                  TextFormField(
+                    controller: motherPhoneController,
+                    decoration: InputDecoration(labelText: "Mother's Phone"),
+                  ),
+                  TextFormField(
+                    controller: addressController,
+                    decoration: InputDecoration(labelText: 'Address'),
+                  ),
+                  TextFormField(
+                    controller: nearbyPhone1Controller,
+                    decoration: InputDecoration(labelText: 'Nearby Phone 1'),
+                  ),
+                  TextFormField(
+                    controller: nearbyPhone2Controller,
+                    decoration: InputDecoration(labelText: 'Nearby Phone 2'),
+                  ),
                   ElevatedButton(
                     onPressed: () async {
                       final newStudentDocRef = await FirebaseFirestore.instance.collection('Students').add({
@@ -269,19 +316,37 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                         'feesLeft': double.parse(feesLeftController.text),
                         'installments': int.parse(installmentsController.text),
                         'installmentsLeft': int.parse(installmentsLeftController.text),
+                        'father': fatherController.text,
+                        'fatherPhone': fatherPhoneController.text,
+                        'mother': motherController.text,
+                        'motherPhone': motherPhoneController.text,
+                        'address': addressController.text,
+                        'nearbyPhone1': nearbyPhone1Controller.text,
+                        'nearbyPhone2': nearbyPhone2Controller.text,
                       });
 
                       if (newStudentDocRef != null) {
-                        setState(() {
-                          nameController.clear();
-                          birthdayController.clear();
-                          classController.clear();
-                          feesController.clear();
-                          feesLeftController.clear();
-                          installmentsController.clear();
-                          installmentsLeftController.clear();
-                          selectedClassId = null;
-                        });
+                        final qrCodeImageUrl = await uploadQRCodeImage(newStudentDocRef.id);
+
+                        if (qrCodeImageUrl != null) {
+                          await newStudentDocRef.update({'photoUrl': qrCodeImageUrl});
+                        } else {
+                          print('Error uploading QR code image for the new student.');
+                        }
+
+                        nameController.clear();
+                        birthdayController.clear();
+                        feesController.clear();
+                        feesLeftController.clear();
+                        installmentsController.clear();
+                        installmentsLeftController.clear();
+                        fatherController.clear();
+                        fatherPhoneController.clear();
+                        motherController.clear();
+                        motherPhoneController.clear();
+                        addressController.clear();
+                        nearbyPhone1Controller.clear();
+                        nearbyPhone2Controller.clear();
                       } else {
                         print('Error adding new student to Firestore.');
                       }
@@ -295,5 +360,56 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> deleteQRCodeImage(String studentId) async {
+    try {
+      final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
+      await storageRef.delete();
+    } catch (e) {
+      print('Error deleting QR code image: $e');
+    }
+  }
+
+  Future<String?> uploadQRCodeImage(String studentId) async {
+    try {
+      final qrImageData = await generateQRCode(studentId);
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/$studentId.png');
+      await file.writeAsBytes(qrImageData);
+
+      final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
+
+      await storageRef.putFile(file);
+
+      final String url = await storageRef.getDownloadURL();
+
+      return url;
+    } catch (e) {
+      print('Error generating/uploading QR code image: $e');
+      return null;
+    }
+  }
+
+  Future<Uint8List> generateQRCode(String studentId) async {
+    final qrCode = QrPainter(
+      data: studentId,
+      version: QrVersions.auto,
+      errorCorrectionLevel: QrErrorCorrectLevel.L,
+      color: Color(0xff000000),
+      emptyColor: Color(0xffffffff),
+    );
+
+    final size = 300.0;
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder, Rect.fromPoints(Offset(0, 0), Offset(size, size)));
+
+    qrCode.paint(canvas, Rect.fromPoints(Offset(0, 0), Offset(size, size)).size);
+
+    final picture = recorder.endRecording();
+    final img = await picture.toImage(size.toInt(), size.toInt());
+    final imgData = await img.toByteData(format: ImageByteFormat.png);
+
+    return imgData!.buffer.asUint8List();
   }
 }

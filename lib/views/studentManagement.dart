@@ -13,6 +13,7 @@ import 'attendanceReport.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
 import 'userManagement.dart';
+import 'package:path_provider/path_provider.dart';
 
 class StudentManagementScreen extends StatefulWidget {
   @override
@@ -30,6 +31,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
   final TextEditingController feesLeftController = TextEditingController();
   final TextEditingController installmentsController = TextEditingController();
   final TextEditingController installmentsLeftController = TextEditingController();
+  final TextEditingController fatherController = TextEditingController();
+  final TextEditingController fatherPhoneController = TextEditingController();
+  final TextEditingController motherController = TextEditingController();
+  final TextEditingController motherPhoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController nearbyPhone1Controller = TextEditingController();
+  final TextEditingController nearbyPhone2Controller = TextEditingController();
 
   String? currentlyEditingStudentId;
   String? selectedClassId;
@@ -75,7 +83,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               ),
             ),
             ListTile(
-              title: Text('User Managemnet Screen'),
+              title: Text('User Management Screen'),
               onTap: () {
                 // Navigate to the ModeratorScreen
                 Navigator.of(context).push(
@@ -177,6 +185,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                       final studentFeesLeft = studentData['feesLeft'] ?? '';
                       final studentInstallments = studentData['installments'] ?? '';
                       final studentInstallmentsLeft = studentData['installmentsLeft'] ?? '';
+                      final father = studentData['father'] ?? '';
+                      final fatherPhone = studentData['fatherPhone'] ?? '';
+                      final mother = studentData['mother'] ?? '';
+                      final motherPhone = studentData['motherPhone'] ?? '';
+                      final address = studentData['address'] ?? '';
+                      final nearbyPhone1 = studentData['nearbyPhone1'] ?? '';
+                      final nearbyPhone2 = studentData['nearbyPhone2'] ?? '';
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -201,6 +216,27 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                               ),
                               ListTile(
                                 title: Text('Installments Left: $studentInstallmentsLeft'),
+                              ),
+                              ListTile(
+                                title: Text("Father's Name: $father"),
+                              ),
+                              ListTile(
+                                title: Text("Father's Phone: $fatherPhone"),
+                              ),
+                              ListTile(
+                                title: Text("Mother's Name: $mother"),
+                              ),
+                              ListTile(
+                                title: Text("Mother's Phone: $motherPhone"),
+                              ),
+                              ListTile(
+                                title: Text("Address: $address"),
+                              ),
+                              ListTile(
+                                title: Text('Nearby Phone 1: $nearbyPhone1'),
+                              ),
+                              ListTile(
+                                title: Text('Nearby Phone 2: $nearbyPhone2'),
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -234,6 +270,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                                       feesLeftController.text = studentFeesLeft;
                                       installmentsController.text = studentInstallments;
                                       installmentsLeftController.text = studentInstallmentsLeft;
+                                      fatherController.text = father;
+                                      fatherPhoneController.text = fatherPhone;
+                                      motherController.text = mother;
+                                      motherPhoneController.text = motherPhone;
+                                      addressController.text = address;
+                                      nearbyPhone1Controller.text = nearbyPhone1;
+                                      nearbyPhone2Controller.text = nearbyPhone2;
                                     },
                                   ),
                                   IconButton(
@@ -336,6 +379,34 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                     decoration: InputDecoration(labelText: 'Installments Left'),
                     keyboardType: TextInputType.number,
                   ),
+                  TextFormField(
+                    controller: fatherController,
+                    decoration: InputDecoration(labelText: "Father's Name"),
+                  ),
+                  TextFormField(
+                    controller: fatherPhoneController,
+                    decoration: InputDecoration(labelText: "Father's Phone"),
+                  ),
+                  TextFormField(
+                    controller: motherController,
+                    decoration: InputDecoration(labelText: "Mother's Name"),
+                  ),
+                  TextFormField(
+                    controller: motherPhoneController,
+                    decoration: InputDecoration(labelText: "Mother's Phone"),
+                  ),
+                  TextFormField(
+                    controller: addressController,
+                    decoration: InputDecoration(labelText: 'Address'),
+                  ),
+                  TextFormField(
+                    controller: nearbyPhone1Controller,
+                    decoration: InputDecoration(labelText: 'Nearby Phone 1'),
+                  ),
+                  TextFormField(
+                    controller: nearbyPhone2Controller,
+                    decoration: InputDecoration(labelText: 'Nearby Phone 2'),
+                  ),
                   ElevatedButton(
                     onPressed: () async {
                       if (currentlyEditingStudentId != null) {
@@ -350,6 +421,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                             'feesLeft': double.parse(feesLeftController.text),
                             'installments': int.parse(installmentsController.text),
                             'installmentsLeft': int.parse(installmentsLeftController.text),
+                            'father': fatherController.text,
+                            'fatherPhone': fatherPhoneController.text,
+                            'mother': motherController.text,
+                            'motherPhone': motherPhoneController.text,
+                            'address': addressController.text,
+                            'nearbyPhone1': nearbyPhone1Controller.text,
+                            'nearbyPhone2': nearbyPhone2Controller.text,
                             'photoUrl': qrCodeImageUrl,
                           });
 
@@ -374,6 +452,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                             feesLeftController.clear();
                             installmentsController.clear();
                             installmentsLeftController.clear();
+                            fatherController.clear();
+                            fatherPhoneController.clear();
+                            motherController.clear();
+                            motherPhoneController.clear();
+                            addressController.clear();
+                            nearbyPhone1Controller.clear();
+                            nearbyPhone2Controller.clear();
                             selectedClassId = null;
                             oldClassId = null;
                           });
@@ -458,6 +543,34 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                     decoration: InputDecoration(labelText: 'Installments Left'),
                     keyboardType: TextInputType.number,
                   ),
+                  TextFormField(
+                    controller: fatherController,
+                    decoration: InputDecoration(labelText: "Father's Name"),
+                  ),
+                  TextFormField(
+                    controller: fatherPhoneController,
+                    decoration: InputDecoration(labelText: "Father's Phone"),
+                  ),
+                  TextFormField(
+                    controller: motherController,
+                    decoration: InputDecoration(labelText: "Mother's Name"),
+                  ),
+                  TextFormField(
+                    controller: motherPhoneController,
+                    decoration: InputDecoration(labelText: "Mother's Phone"),
+                  ),
+                  TextFormField(
+                    controller: addressController,
+                    decoration: InputDecoration(labelText: 'Address'),
+                  ),
+                  TextFormField(
+                    controller: nearbyPhone1Controller,
+                    decoration: InputDecoration(labelText: 'Nearby Phone 1'),
+                  ),
+                  TextFormField(
+                    controller: nearbyPhone2Controller,
+                    decoration: InputDecoration(labelText: 'Nearby Phone 2'),
+                  ),
                   ElevatedButton(
                     onPressed: () async {
                       final newStudentDocRef = await FirebaseFirestore.instance.collection('Students').add({
@@ -468,6 +581,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                         'feesLeft': double.parse(feesLeftController.text),
                         'installments': int.parse(installmentsController.text),
                         'installmentsLeft': int.parse(installmentsLeftController.text),
+                        'father': fatherController.text,
+                        'fatherPhone': fatherPhoneController.text,
+                        'mother': motherController.text,
+                        'motherPhone': motherPhoneController.text,
+                        'address': addressController.text,
+                        'nearbyPhone1': nearbyPhone1Controller.text,
+                        'nearbyPhone2': nearbyPhone2Controller.text,
                       });
 
                       if (newStudentDocRef != null) {
@@ -492,6 +612,13 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                         feesLeftController.clear();
                         installmentsController.clear();
                         installmentsLeftController.clear();
+                        fatherController.clear();
+                        fatherPhoneController.clear();
+                        motherController.clear();
+                        motherPhoneController.clear();
+                        addressController.clear();
+                        nearbyPhone1Controller.clear();
+                        nearbyPhone2Controller.clear();
                         selectedClassId = null;
                       } else {
                         print('Error adding new student to Firestore.');

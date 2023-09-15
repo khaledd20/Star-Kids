@@ -44,44 +44,44 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: "AIzaSyDwuf4ASxGVHQDpJYG8Nba2NhMXlLXHvk0",
-      appId: "1:35723641214:android:30a76da5798922bf5b332f",
-      messagingSenderId: "35723641214",
-      projectId: "star-kids-c24da",
-    authDomain: 'secondserving-ef1f1.firebaseapp.com',
+    apiKey: 'AIzaSyDwuf4ASxGVHQDpJYG8Nba2NhMXlLXHvk0',
+    appId: '1:35723641214:web:97c2b6a4bb92f95e5b332f',
+    messagingSenderId: '35723641214',
+    projectId: 'star-kids-c24da',
+    authDomain: 'star-kids-c24da.firebaseapp.com',
     databaseURL: 'https://star-kids-c24da-default-rtdb.firebaseio.com',
     storageBucket: 'star-kids-c24da.appspot.com',
-    measurementId: 'G-SCP8GWL34D',
+    measurementId: 'G-G56CQ5J41Y',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: "AIzaSyDwuf4ASxGVHQDpJYG8Nba2NhMXlLXHvk0",
-      appId: "1:35723641214:android:30a76da5798922bf5b332f",
-      messagingSenderId: "35723641214",
-      projectId: "star-kids-c24da",
+    apiKey: 'AIzaSyA2khN1TVcF8OxpOZZyTQjw9rjjP_1Q6pY',
+    appId: '1:35723641214:android:a6cae971c9822a6d5b332f',
+    messagingSenderId: '35723641214',
+    projectId: 'star-kids-c24da',
     databaseURL: 'https://star-kids-c24da-default-rtdb.firebaseio.com',
     storageBucket: 'star-kids-c24da.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: "AIzaSyDwuf4ASxGVHQDpJYG8Nba2NhMXlLXHvk0",
-      appId: "1:35723641214:android:30a76da5798922bf5b332f",
-      messagingSenderId: "35723641214",
-      projectId: "star-kids-c24da",
+    apiKey: 'AIzaSyCaUUt5-aD9QAv18A3g8kKt9WVUT5BA7KM',
+    appId: '1:35723641214:ios:49ab43163b6c46e35b332f',
+    messagingSenderId: '35723641214',
+    projectId: 'star-kids-c24da',
     databaseURL: 'https://star-kids-c24da-default-rtdb.firebaseio.com',
     storageBucket: 'star-kids-c24da.appspot.com',
-    iosClientId: '566371582218-b2gqrmsr77sg55t16gkn22eq10knmkej.apps.googleusercontent.com',
-    iosBundleId: 'com.example.secondserving',
+    androidClientId: '35723641214-uqn5bcp0c85tltokahpt6es2k674756s.apps.googleusercontent.com',
+    iosBundleId: 'com.example.myFlutterProject',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: "AIzaSyDwuf4ASxGVHQDpJYG8Nba2NhMXlLXHvk0",
-      appId: "1:35723641214:android:30a76da5798922bf5b332f",
-      messagingSenderId: "35723641214",
-      projectId: "star-kids-c24da",
+    apiKey: 'AIzaSyCaUUt5-aD9QAv18A3g8kKt9WVUT5BA7KM',
+    appId: '1:35723641214:ios:dde0f12927a565955b332f',
+    messagingSenderId: '35723641214',
+    projectId: 'star-kids-c24da',
     databaseURL: 'https://star-kids-c24da-default-rtdb.firebaseio.com',
     storageBucket: 'star-kids-c24da.appspot.com',
-    iosClientId: '566371582218-b2gqrmsr77sg55t16gkn22eq10knmkej.apps.googleusercontent.com',
-    iosBundleId: 'com.example.secondserving',
+    androidClientId: '35723641214-uqn5bcp0c85tltokahpt6es2k674756s.apps.googleusercontent.com',
+    iosBundleId: 'com.example.myFlutterProject.RunnerTests',
   );
 }
