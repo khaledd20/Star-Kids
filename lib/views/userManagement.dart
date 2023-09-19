@@ -17,257 +17,255 @@ class _userManagementScreenState extends State<userManagementScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController userroleController = TextEditingController();
 
-  // Track the currently edited user document ID
+  // تتبع معرف المستخدم الذي يتم تحريره حاليًا
   String? currentlyEditingUserId;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('User Managemnet'),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Admin Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+    return Directionality(
+      textDirection: TextDirection.rtl, // تعيين اتجاه النص إلى اليمين-اليسار (rtl)
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('إدارة المستخدمين'),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.purple,
+                ),
+                child: Text(
+                  'قائمة الإدارة',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
                 ),
               ),
-            ),
-            ListTile(
-              title: Text('User Managemnet Screen'),
-              onTap: () {
-                // Navigate to the ModeratorScreen
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => userManagementScreen(),
+              ListTile(
+                title: Text('شاشة إدارة المستخدمين'),
+                onTap: () {
+                  // انتقل إلى شاشة إدارة المستخدمين
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => userManagementScreen(),
                     ),
-                  );
-              },
-            ),
-            ListTile(
-              title: Text('Student Management Screen'),
-              onTap: () {
-                // Navigate to the ModeratorScreen
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => StudentManagementScreen(),
-                    ),
-                  );
-              },
-            ),
-            ListTile(
-              title: Text('Finance report'),
-              onTap: () {
-                // Navigate to the ModeratorScreen
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => FinanceReportScreen(),
-                    ),
-                  );
-              },
-            ),
-            ListTile(
-              title: Text('Attendance report'),
-              onTap: () {
-                // Navigate to the ModeratorScreen
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => AttendanceReportScreen(),
-                    ),
-                  );
-              },
-            ),
-            ListTile(
-              title: Text('Archived Students'),
-              onTap: () {
-                // Navigate to the ModeratorScreen
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ArchivedStudentsScreen(),
-                    ),
-                  );
-              },
-            ),
-            ListTile(
-              title: Text('Log Out'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
-                    ),
-                  );
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Welcome to User Managemnet page',
-                style: TextStyle(fontSize: 24),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Users:',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('Users').snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return CircularProgressIndicator();
-                  }
-
-                  final users = snapshot.data!.docs;
-                  List<Widget> userWidgets = [];
-
-                  for (var user in users) {
-                    final userData = user.data() as Map<String, dynamic>;
-                    final userId = user.id;
-                    final username = userData['name'] ?? ''; // Updated to 'name'
-                    final password = userData['password'] ?? '';
-                    final userrole = userData['role'] ?? '';
-
-                    userWidgets.add(
-                      ListTile(
-                        title: Text('User ID: $userId'), // Display User ID
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Name: $username'), // Updated to 'Name'
-                            Text('Password: $password'),
-                            Text('role: $userrole'),
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                // Set the currently editing user ID
-                                setState(() {
-                                  currentlyEditingUserId = userId;
-                                });
-
-                                // Pre-fill the edit form with user data
-                                nameController.text = username;
-                                passwordController.text = password;
-                                userroleController.text = userrole;
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                // Delete user from Firestore
-                                FirebaseFirestore.instance.collection('Users').doc(userId).delete();
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-
-                  return ListView(
-                    shrinkWrap: true, // Allow the ListView to take minimum space
-                    physics: NeverScrollableScrollPhysics(), // Disable scrolling of ListView
-                    children: userWidgets,
                   );
                 },
               ),
-              SizedBox(height: 20),
-              Text(
-                'Edit User:',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ListTile(
+                title: Text('شاشة إدارة الطلاب'),
+                onTap: () {
+                  // انتقل إلى شاشة إدارة الطلاب
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => StudentManagementScreen(),
+                    ),
+                  );
+                },
               ),
-              TextFormField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: 'Name'), // Updated to 'Name'
+              ListTile(
+                title: Text('تقرير مالي'),
+                onTap: () {
+                  // انتقل إلى تقرير مالي
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => FinanceReportScreen(),
+                    ),
+                  );
+                },
               ),
-              TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+              ListTile(
+                title: Text('تقرير الحضور'),
+                onTap: () {
+                  // انتقل إلى تقرير الحضور
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => AttendanceReportScreen(),
+                    ),
+                  );
+                },
               ),
-              TextFormField(
-                controller: userroleController,
-                decoration: InputDecoration(labelText: 'User role'),
+              ListTile(
+                title: Text('الطلاب المؤرشفين'),
+                onTap: () {
+                  // انتقل إلى الطلاب المؤرشفين
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ArchivedStudentsScreen(),
+                    ),
+                  );
+                },
               ),
-              ElevatedButton(
-                onPressed: () {
-                  // Update user data in Firestore
-                  FirebaseFirestore.instance.collection('Users').doc(currentlyEditingUserId).update({
-                    'name': nameController.text, // Updated to 'name'
-                    'password': passwordController.text,
-                    'role': userroleController.text,
-                  });
+              ListTile(
+                title: Text('تسجيل الخروج'),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'مرحبًا بك في صفحة إدارة المستخدمين',
+                  style: TextStyle(fontSize: 24),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'المستخدمون:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('Users').snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return CircularProgressIndicator();
+                    }
 
-                  // Clear the input fields and reset the editing state
-                  setState(() {
-                    currentlyEditingUserId = null;
+                    final users = snapshot.data!.docs;
+                    List<Widget> userWidgets = [];
+
+                    for (var user in users) {
+                      final userData = user.data() as Map<String, dynamic>;
+                      final userId = user.id;
+                      final username = userData['name'] ?? ''; // تحديث إلى 'name'
+                      final password = userData['password'] ?? '';
+                      final userrole = userData['role'] ?? '';
+
+                      userWidgets.add(
+                        ListTile(
+                          title: Text('معرف المستخدم: $userId'), // عرض معرف المستخدم
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('الاسم: $username'), // تحديث إلى 'الاسم'
+                              Text('كلمة المرور: $password'),
+                              Text('الدور: $userrole'),
+                            ],
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+                                  // قم بتعيين معرف المستخدم الذي يتم تحريره حاليًا
+                                  setState(() {
+                                    currentlyEditingUserId = userId;
+                                  });
+
+                                  // قم بملء النموذج التحريري ببيانات المستخدم
+                                  nameController.text = username;
+                                  passwordController.text = password;
+                                  userroleController.text = userrole;
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () {
+                                  // حذف المستخدم من Firestore
+                                  FirebaseFirestore.instance.collection('Users').doc(userId).delete();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+
+                    return ListView(
+                      shrinkWrap: true, // السماح لقائمة العرض باتخاذ حجم الحد الأدنى
+                      physics: NeverScrollableScrollPhysics(), // تعطيل التمرير في قائمة العرض
+                      children: userWidgets,
+                    );
+                  },
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'تحرير المستخدم:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                TextFormField(
+                  controller: nameController,
+                  decoration: InputDecoration(labelText: 'الاسم'), // تحديث إلى 'الاسم'
+                ),
+                TextFormField(
+                  controller: passwordController,
+                  decoration: InputDecoration(labelText: 'كلمة المرور'),
+                ),
+                TextFormField(
+                  controller: userroleController,
+                  decoration: InputDecoration(labelText: 'الدور'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // تحديث بيانات المستخدم في Firestore
+                    FirebaseFirestore.instance.collection('Users').doc(currentlyEditingUserId).update({
+                      'name': nameController.text, // تحديث إلى 'name'
+                      'password': passwordController.text,
+                      'role': userroleController.text,
+                    });
+
+                    // مسح حقول الإدخال وإعادة تعيين حالة التحرير
+                    setState(() {
+                      currentlyEditingUserId = null;
+                      nameController.clear();
+                      passwordController.clear();
+                      userroleController.clear();
+                    });
+                  },
+                  child: Text('حفظ التغييرات'),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'إضافة مستخدم:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                TextFormField(
+                  controller: nameController,
+                  decoration: InputDecoration(labelText: 'الاسم'), // تحديث إلى 'الاسم'
+                ),
+                TextFormField(
+                  controller: passwordController,
+                  decoration: InputDecoration(labelText: 'كلمة المرور'),
+                ),
+                TextFormField(
+                  controller: userroleController,
+                  decoration: InputDecoration(labelText: 'الدور'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    // إضافة مستخدم جديد إلى Firestore مع معرف تم إنشاؤه تلقائيًا
+                    await FirebaseFirestore.instance.collection('Users').add({
+                      'name': nameController.text,
+                      'password': passwordController.text,
+                      'role': userroleController.text,
+                    });
+
+                    // مسح حقول الإدخال
                     nameController.clear();
                     passwordController.clear();
                     userroleController.clear();
-                  });
-                },
-                child: Text('Save Changes'),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Add User:',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              TextFormField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: 'Name'), // Updated to 'Name'
-              ),
-              TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
-              ),
-              TextFormField(
-                controller: userroleController,
-                decoration: InputDecoration(labelText: 'User role'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  // Add new user to Firestore with an automatically generated ID
-                  await FirebaseFirestore.instance.collection('Users').add({
-                    'name': nameController.text,
-                    'password': passwordController.text,
-                    'role': userroleController.text,
-                  });
-
-                  // Clear the input fields
-                  nameController.clear();
-                  passwordController.clear();
-                  userroleController.clear();
-                },
-                child: Text('Add User'),
-              ),
-
-            ],
+                  },
+                  child: Text('إضافة مستخدم'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-  
 }
-
-
-

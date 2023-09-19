@@ -7,18 +7,20 @@ import 'financeReport.dart';
 import 'login_screen.dart';
 import 'studentManagement.dart';
 import 'userManagement.dart';
+
 class adminScreen extends StatefulWidget {
   @override
-  _adminScreenState createState() => _adminScreenState();
+  _AdminScreenState createState() => _AdminScreenState();
 }
 
-class _adminScreenState extends State<adminScreen> {
+class _AdminScreenState extends State<adminScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Directionality(
+      textDirection: TextDirection.rtl, // Set textDirection to right-to-left (rtl)
+      child: Scaffold(
       appBar: AppBar(
-        title: Text('Admin Screen'),
-        
+        title: Text('شاشة المشرف'),
       ),
       drawer: Drawer(
         child: ListView(
@@ -26,10 +28,10 @@ class _adminScreenState extends State<adminScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.purple,
               ),
               child: Text(
-                'Admin Menu',
+                'قائمة المشرف',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -37,75 +39,76 @@ class _adminScreenState extends State<adminScreen> {
               ),
             ),
             ListTile(
-              title: Text('User Managemnet Screen'),
+              title: Text('شاشة إدارة المستخدمين'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة إدارة المستخدمين
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => userManagementScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Student Management Screen'),
+              title: Text('شاشة إدارة الطلاب'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة إدارة الطلاب
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => StudentManagementScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Finance report'),
+              title: Text('تقرير المالية'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة تقرير المالية
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FinanceReportScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Attendance report'),
+              title: Text('تقرير الحضور'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة تقرير الحضور
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => AttendanceReportScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Archived Students'),
+              title: Text('الطلاب المؤرشفين'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة الطلاب المؤرشفين
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ArchivedStudentsScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Log Out'),
+              title: Text('تسجيل الخروج'),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => LoginScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
           ],
         ),
       ),
       body: Center(
-        child: Text('Admin Screen Content'),
+        child: Text('محتوى شاشة المشرف'),
+      ),
       ),
     );
   }

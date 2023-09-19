@@ -57,9 +57,11 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Directionality(
+      textDirection: TextDirection.rtl, // تعيين اتجاه النص إلى اليمين-إلى-اليسار (rtl)
+      child: Scaffold(
       appBar: AppBar(
-        title: Text('Student Management'),
+        title: Text('إدارة الطلاب'),
       ),
       drawer: Drawer(
         child: ListView(
@@ -67,10 +69,10 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.purple,
               ),
               child: Text(
-                'Moderator Menu',
+                'قائمة المشرف',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -79,9 +81,9 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
             ),
             ListTile(
               leading: Icon(Icons.navigate_next),
-              title: Text('Attendance'),
+              title: Text('الحضور'),
               onTap: () {
-                // Close the drawer and navigate to the studentAttendance
+                // إغلاق القائمة والانتقال إلى شاشة الحضور الطلابي
                 Navigator.pop(context);
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => StudentAttendanceScreen(user: null),
@@ -89,10 +91,10 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.manage_accounts), // Icon for Student Management
-              title: Text('Student Add'), // Text for Student Management
+              leading: Icon(Icons.manage_accounts), // أيقونة إدارة الطلاب
+              title: Text('إضافة طالب'), // نص إدارة الطلاب
               onTap: () {
-                // Close the drawer and navigate to the StudentAddingScreen
+                // إغلاق القائمة والانتقال إلى شاشة إضافة الطلاب
                 Navigator.pop(context);
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => StudentAddingScreen(),
@@ -100,10 +102,10 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.payment_sharp), // Icon for Student Management
-              title: Text('Finance'), // Text for Student Management
+              leading: Icon(Icons.payment_sharp), // أيقونة المالية
+              title: Text('الأقساط'), // نص المالية
               onTap: () {
-                // Close the drawer and navigate to the StudentManagementScreen
+                // إغلاق القائمة والانتقال إلى شاشة إدارة الأقساط
                 Navigator.pop(context);
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => InstallmentsScreen(),
@@ -111,7 +113,7 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
               },
             ),
             ListTile(
-              title: Text('Log Out'),
+              title: Text('تسجيل الخروج'),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -130,12 +132,12 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Welcome to the Student Management Page!',
+                'مرحبًا بك في صفحة إدارة الطلاب!',
                 style: TextStyle(fontSize: 24),
               ),
               SizedBox(height: 20),
               Text(
-                'Students:',
+                'الطلاب:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               StreamBuilder<QuerySnapshot>(
@@ -176,46 +178,46 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Card(
                           child: ExpansionTile(
-                            title: Text('Name: $studentName'),
+                            title: Text('الاسم: $studentName'),
                             children: [
                               ListTile(
-                                title: Text('Birthday: $studentBirthday'),
+                                title: Text('تاريخ الميلاد: $studentBirthday'),
                               ),
                               ListTile(
-                                title: Text('Class: $studentClass'),
+                                title: Text('الصف: $studentClass'),
                               ),
                               ListTile(
-                                title: Text('Fees: $studentFees'),
+                                title: Text('الرسوم: $studentFees'),
                               ),
                               ListTile(
-                                title: Text('Fees Left: $studentFeesLeft'),
+                                title: Text('الرسوم المتبقية: $studentFeesLeft'),
                               ),
                               ListTile(
-                                title: Text('Installments: $studentInstallments'),
+                                title: Text('الأقساط: $studentInstallments'),
                               ),
                               ListTile(
-                                title: Text('Installments Left: $studentInstallmentsLeft'),
+                                title: Text('الأقساط المتبقية: $studentInstallmentsLeft'),
                               ),
                               ListTile(
-                                title: Text("Father's Name: $father"),
+                                title: Text("اسم الأب: $father"),
                               ),
                               ListTile(
-                                title: Text("Father's Phone: $fatherPhone"),
+                                title: Text("هاتف الأب: $fatherPhone"),
                               ),
                               ListTile(
-                                title: Text("Mother's Name: $mother"),
+                                title: Text("اسم الأم: $mother"),
                               ),
                               ListTile(
-                                title: Text("Mother's Phone: $motherPhone"),
+                                title: Text("هاتف الأم: $motherPhone"),
                               ),
                               ListTile(
-                                title: Text("Address: $address"),
+                                title: Text("العنوان: $address"),
                               ),
                               ListTile(
-                                title: Text('Nearby Phone 1: $nearbyPhone1'),
+                                title: Text('الهاتف القريب 1: $nearbyPhone1'),
                               ),
                               ListTile(
-                                title: Text('Nearby Phone 2: $nearbyPhone2'),
+                                title: Text('الهاتف القريب 2: $nearbyPhone2'),
                               ),
                               FutureBuilder<String?>(
                                 future: uploadQRCodeImage(studentId),
@@ -225,7 +227,7 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                                       snapshot.data != null) {
                                     return Image.network(
                                       snapshot.data!,
-                                      width: 50, // Adjust the size as needed
+                                      width: 50, // تعديل الحجم حسب الحاجة
                                       height: 50,
                                     );
                                   } else {
@@ -243,68 +245,68 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
               ),
               SizedBox(height: 20),
               Text(
-                'Add Student:',
+                'إضافة طالب:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               ExpansionTile(
-                title: Text('Add New Student'),
+                title: Text('إضافة طالب جديد'),
                 children: [
                   TextFormField(
                     controller: nameController,
-                    decoration: InputDecoration(labelText: 'Name'),
+                    decoration: InputDecoration(labelText: 'الاسم'),
                   ),
                   TextFormField(
                     controller: birthdayController,
-                    decoration: InputDecoration(labelText: 'Birthday'),
-                    onTap: () => _selectDate(context), // Show date picker when tapped
+                    decoration: InputDecoration(labelText: 'تاريخ الميلاد'),
+                    onTap: () => _selectDate(context), // إظهار منتقي التاريخ عند النقر
                   ),
                   TextFormField(
                     controller: feesController,
-                    decoration: InputDecoration(labelText: 'Fees'),
+                    decoration: InputDecoration(labelText: 'الرسوم'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: feesLeftController,
-                    decoration: InputDecoration(labelText: 'Fees Left'),
+                    decoration: InputDecoration(labelText: 'الرسوم المتبقية'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: installmentsController,
-                    decoration: InputDecoration(labelText: 'Installments'),
+                    decoration: InputDecoration(labelText: 'الأقساط'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: installmentsLeftController,
-                    decoration: InputDecoration(labelText: 'Installments Left'),
+                    decoration: InputDecoration(labelText: 'الأقساط المتبقية'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: fatherController,
-                    decoration: InputDecoration(labelText: "Father's Name"),
+                    decoration: InputDecoration(labelText: "اسم الأب"),
                   ),
                   TextFormField(
                     controller: fatherPhoneController,
-                    decoration: InputDecoration(labelText: "Father's Phone"),
+                    decoration: InputDecoration(labelText: "هاتف الأب"),
                   ),
                   TextFormField(
                     controller: motherController,
-                    decoration: InputDecoration(labelText: "Mother's Name"),
+                    decoration: InputDecoration(labelText: "اسم الأم"),
                   ),
                   TextFormField(
                     controller: motherPhoneController,
-                    decoration: InputDecoration(labelText: "Mother's Phone"),
+                    decoration: InputDecoration(labelText: "هاتف الأم"),
                   ),
                   TextFormField(
                     controller: addressController,
-                    decoration: InputDecoration(labelText: 'Address'),
+                    decoration: InputDecoration(labelText: 'العنوان'),
                   ),
                   TextFormField(
                     controller: nearbyPhone1Controller,
-                    decoration: InputDecoration(labelText: 'Nearby Phone 1'),
+                    decoration: InputDecoration(labelText: 'الهاتف القريب 1'),
                   ),
                   TextFormField(
                     controller: nearbyPhone2Controller,
-                    decoration: InputDecoration(labelText: 'Nearby Phone 2'),
+                    decoration: InputDecoration(labelText: 'الهاتف القريب 2'),
                   ),
                   ElevatedButton(
                     onPressed: () async {
@@ -331,7 +333,7 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                         if (qrCodeImageUrl != null) {
                           await newStudentDocRef.update({'photoUrl': qrCodeImageUrl});
                         } else {
-                          print('Error uploading QR code image for the new student.');
+                          print('خطأ في رفع صورة الرمز الاستجابي للطالب الجديد.');
                         }
 
                         nameController.clear();
@@ -348,10 +350,10 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                         nearbyPhone1Controller.clear();
                         nearbyPhone2Controller.clear();
                       } else {
-                        print('Error adding new student to Firestore.');
+                        print('خطأ في إضافة الطالب الجديد إلى Firestore.');
                       }
                     },
-                    child: Text('Add Student'),
+                    child: Text('إضافة طالب'),
                   ),
                 ],
               ),
@@ -359,6 +361,7 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
           ),
         ),
       ),
+      )
     );
   }
 
@@ -367,7 +370,7 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
       final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
       await storageRef.delete();
     } catch (e) {
-      print('Error deleting QR code image: $e');
+      print('خطأ في حذف صورة الرمز الاستجابي: $e');
     }
   }
 
@@ -386,7 +389,7 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
 
       return url;
     } catch (e) {
-      print('Error generating/uploading QR code image: $e');
+      print('خطأ في إنشاء/رفع صورة الرمز الاستجابي: $e');
       return null;
     }
   }

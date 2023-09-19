@@ -17,24 +17,28 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
   DateTime? selectedDate;
   String? selectedClass;
 
-  List<Map<String, String>> attendanceData = []; // List to store attendance data
+  List<Map<String, String>> attendanceData = []; // قائمة لتخزين بيانات الحضور
+  EdgeInsets padding = EdgeInsets.symmetric(horizontal: 16.0);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Directionality(
+        textDirection: TextDirection.rtl, // Set textDirection to right-to-left (rtl)
+      child: Scaffold(
       appBar: AppBar(
-        title: Text('Attendance Report'),
+        title: Text('تقرير الحضور'),
+        //  // المحاذاة إلى اليمين
       ),
       drawer: Drawer(
         child: ListView(
-          padding: EdgeInsets.zero,
+          padding: padding,
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.purple,
               ),
               child: Text(
-                'Admin Menu',
+                'قائمة المشرف',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -42,92 +46,94 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
               ),
             ),
             ListTile(
-              title: Text('User Managemnet Screen'),
+              title: Text('شاشة إدارة المستخدمين'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة إدارة المستخدمين
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => userManagementScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Student Management Screen'),
+              title: Text('شاشة إدارة الطلاب'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة إدارة الطلاب
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => StudentManagementScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Finance report'),
+              title: Text('تقرير المالية'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة تقرير المالية
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FinanceReportScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Attendance report'),
+              title: Text('تقرير الحضور'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة تقرير الحضور
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => AttendanceReportScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Archived Students'),
+              title: Text('الطلاب المؤرشفين'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة الطلاب المؤرشفين
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ArchivedStudentsScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Log Out'),
+              title: Text('تسجيل الخروج'),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => LoginScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
           ],
         ),
       ),
-      body: Padding(
+      body: 
+      Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Select Date:',
+              'اختر التاريخ:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             ElevatedButton(
               onPressed: () => _selectDate(context),
               child: Text(selectedDate != null
                   ? "${selectedDate!.toLocal()}".split(' ')[0]
-                  : 'Select a Date'),
+                  : 'اختر تاريخًا'),
             ),
             SizedBox(height: 20),
             Text(
-              'Select Class:',
+              'اختر الصف:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                // المحاذاة إلى اليمين
             ),
             DropdownButton<String>(
               value: selectedClass,
@@ -151,27 +157,27 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
                   _loadAttendanceData(selectedDate!, selectedClass!);
                 }
               },
-              child: Text('Load Attendance Data'),
+              child: Text('تحميل بيانات الحضور'),
             ),
             SizedBox(height: 20),
-            // Display attendance data here
+            // عرض بيانات الحضور هنا
             if (attendanceData.isNotEmpty)
-              Expanded( // Wrap your ListView.builder with Expanded
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Attendance Data:',
+                      'بيانات الحضور:',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    Expanded( // Wrap your ListView.builder with Expanded
+                      ),
+                    Expanded(
                       child: ListView.builder(
                         itemCount: attendanceData.length,
                         itemBuilder: (context, index) {
                           final studentData = attendanceData[index];
                           return ListTile(
-                            title: Text('Student: ${studentData["studentName"]}'),
-                            subtitle: Text('Status: ${studentData["status"]}'),
+                            title: Text('الطالب: ${studentData["studentName"]}'),
+                            subtitle: Text('الحالة: ${studentData["status"]}'),
                           );
                         },
                       ),
@@ -181,6 +187,7 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
               ),
           ],
         ),
+      ),
       ),
     );
   }
@@ -196,93 +203,95 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        attendanceData.clear(); // Clear existing attendance data
+        attendanceData.clear(); // مسح بيانات الحضور الحالية
       });
     }
   }
-  Future<List<String>> fetchStudents(String selectedClass) async {
-  try {
-    final DocumentSnapshot classSnapshot = await _firestore.collection('Classes').doc(selectedClass).get();
 
-    if (classSnapshot.exists) {
-      final students = classSnapshot['students'] as List<dynamic>;
-      return students.cast<String>(); // Convert to List<String>
-    } else {
-      // Handle the case when the class document does not exist.
+  Future<List<String>> fetchStudents(String selectedClass) async {
+    try {
+      final DocumentSnapshot classSnapshot =
+          await _firestore.collection('Classes').doc(selectedClass).get();
+
+      if (classSnapshot.exists) {
+        final students = classSnapshot['students'] as List<dynamic>;
+        return students.cast<String>(); // تحويلها إلى List<String>
+      } else {
+        // التعامل مع حالة عدم وجود وثيقة الصف.
+        return [];
+      }
+    } catch (e) {
+      print('خطأ أثناء جلب الطلاب: $e');
       return [];
     }
-  } catch (e) {
-    print('Error fetching students: $e');
-    return [];
   }
-}
 
   void _loadAttendanceData(DateTime date, String selectedClass) async {
-  // Firestore query to fetch attendance data
-  final formattedDate = '${date.year}-${date.month}-${date.day}';
-  final query = _firestore.collection('Attendance').doc(formattedDate);
+    // استعلام Firestore لجلب بيانات الحضور
+    final formattedDate = '${date.year}-${date.month}-${date.day}';
+    final query = _firestore.collection('Attendance').doc(formattedDate);
 
-  try {
-    query.get().then((DocumentSnapshot documentSnapshot) async {
-      if (documentSnapshot.exists) {
-        final attendanceDataMap = documentSnapshot.data() as Map<String, dynamic>;
+    try {
+      query.get().then((DocumentSnapshot documentSnapshot) async {
+        if (documentSnapshot.exists) {
+          final attendanceDataMap = documentSnapshot.data() as Map<String, dynamic>;
 
-        if (attendanceDataMap != null && attendanceDataMap.containsKey(selectedClass)) {
-          final attendanceDataList = attendanceDataMap[selectedClass]['attendanceData'] as List<dynamic>;
+          if (attendanceDataMap != null &&
+              attendanceDataMap.containsKey(selectedClass)) {
+            final attendanceDataList =
+                attendanceDataMap[selectedClass]['attendanceData'] as List<dynamic>;
 
-          // Fetch students from the "Classes" collection
-          final students = await fetchStudents(selectedClass);
+            // جلب الطلاب من مجموعة "الصفوف"
+            final students = await fetchStudents(selectedClass);
 
-          // Create a map to track student attendance status
-          Map<String, String> studentAttendance = {};
+            // إنشاء خريطة لتتبع حالة حضور الطلاب
+            Map<String, String> studentAttendance = {};
 
-          // Initialize all students as absent
-          for (var student in students) {
-            studentAttendance[student] = 'absent';
-          }
+            // تهيئة جميع الطلاب كغائبين
+            for (var student in students) {
+              studentAttendance[student] = 'غائب';
+            }
 
-          // Mark students as attended
-          for (var item in attendanceDataList) {
-            final studentName = item['studentName'] as String;
-            final status = item['status'] as String;
-            studentAttendance[studentName] = status;
-          }
+            // وضع علامات للطلاب كحاضرين
+            for (var item in attendanceDataList) {
+              final studentName = item['studentName'] as String;
+              final status = item['status'] as String;
+              studentAttendance[studentName] = status;
+            }
 
-          // Convert the map to a list for display
-          List<Map<String, String>> data = [];
-          studentAttendance.forEach((studentName, status) {
-            data.add({
-              'studentName': studentName,
-              'status': status,
+            // تحويل الخريطة إلى قائمة للعرض
+            List<Map<String, String>> data = [];
+            studentAttendance.forEach((studentName, status) {
+              data.add({
+                'studentName': studentName,
+                'status': status,
+              });
             });
-          });
 
-          setState(() {
-            attendanceData = data;
-          });
+            setState(() {
+              attendanceData = data;
+            });
+          } else {
+            // التعامل مع حالة عدم وجود بيانات الصف المحدد في التاريخ المحدد.
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('لا توجد بيانات حضور متاحة للصف المحدد في هذا التاريخ.'),
+              ),
+            );
+          }
         } else {
-          // Handle the case when the selected class does not exist for the given date.
+          // التعامل مع حالة عدم وجود وثيقة للتاريخ المحدد.
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('No attendance data available for the selected class on this date.'),
+              content: Text('لا توجد بيانات حضور متاحة لهذا التاريخ. الوثيقة غير موجودة.'),
             ),
           );
         }
-      } else {
-        // Handle the case when the document for the selected date does not exist.
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('No attendance data available for the selected date. Document does not exist.'),
-          ),
-        );
-      }
-    }).catchError((error) {
-      print('Error fetching attendance data: $error');
-    });
-  } catch (e) {
-    print('Error fetching students: $e');
+      }).catchError((error) {
+        print('خطأ أثناء جلب بيانات الحضور: $error');
+      });
+    } catch (e) {
+      print('خطأ أثناء جلب الطلاب: $e');
+    }
   }
-}
-
-
 }

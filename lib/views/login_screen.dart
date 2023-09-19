@@ -14,7 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  String errorMessage = ''; // Store error message
+  String errorMessage = ''; // تخزين رسالة الخطأ
 
   void showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -26,10 +26,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Directionality(
+      textDirection: TextDirection.rtl, // Set textDirection to right-to-left (rtl)
+      child: Scaffold(
       appBar: AppBar(
         title: Text(
-          'Star Kids', // Bold title "Star Kids"
+          'ستار كيدز', // عنوان مميز "ستار كيدز"
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -45,28 +47,28 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: usernameController,
                 decoration: InputDecoration(
-                  labelText: 'Username',
-                  border: OutlineInputBorder(), // Add border
+                  labelText: 'اسم المستخدم',
+                  border: OutlineInputBorder(), // إضافة حدود
                 ),
               ),
-              SizedBox(height: 16), // Add spacing
+              SizedBox(height: 16), // إضافة مسافة
               TextField(
                 controller: passwordController,
                 decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(), // Add border
+                  labelText: 'كلمة المرور',
+                  border: OutlineInputBorder(), // إضافة حدود
                 ),
                 obscureText: true,
               ),
-              SizedBox(height: 32), // Add more spacing
+              SizedBox(height: 32), // إضافة مزيد من المسافة
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    // Authenticate the user with username and password
+                    // قم بالتحقق من الهوية باستخدام اسم المستخدم وكلمة المرور
                     final username = usernameController.text;
                     final password = passwordController.text;
 
-                    // Query Firestore to find the user with the provided username
+                    // استعلام Firestore للعثور على المستخدم باستخدام اسم المستخدم المقدم
                     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
                         .collection('Users')
                         .where('name', isEqualTo: username)
@@ -100,23 +102,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         }
                       } else {
-                        showErrorSnackBar('Invalid password');
-                        // Handle incorrect password
+                        showErrorSnackBar('كلمة المرور غير صحيحة');
+                        // التعامل مع كلمة المرور غير الصحيحة
                       }
                     } else {
-                      showErrorSnackBar('User not found');
-                      // Handle user not found
+                      showErrorSnackBar('المستخدم غير موجود');
+                      // التعامل مع عدم وجود المستخدم
                     }
                   } catch (e) {
-                    showErrorSnackBar('Error during login: $e');
-                    // Handle authentication errors here
+                    showErrorSnackBar('حدث خطأ أثناء تسجيل الدخول: $e');
+                    // التعامل مع أخطاء المصادقة هنا
                   }
                 },
-                child: Text('Login'),
+                child: Text('تسجيل الدخول'),
               ),
             ],
           ),
         ),
+      ),
       ),
     );
   }

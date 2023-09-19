@@ -9,9 +9,11 @@ import 'userManagement.dart';
 class ArchivedStudentsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+   return Directionality(
+      textDirection: TextDirection.rtl, // Set textDirection to right-to-left (rtl)
+      child: Scaffold(
       appBar: AppBar(
-        title: Text('Archived Students'),
+        title: Text('الطلاب المؤرشفين'),
       ),
       drawer: Drawer(
         child: ListView(
@@ -19,10 +21,10 @@ class ArchivedStudentsScreen extends StatelessWidget {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.purple,
               ),
               child: Text(
-                'Admin Menu',
+                'قائمة المشرف',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -30,68 +32,68 @@ class ArchivedStudentsScreen extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: Text('User Managemnet Screen'),
+              title: Text('شاشة إدارة المستخدمين'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة إدارة المستخدمين
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => userManagementScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Student Management Screen'),
+              title: Text('شاشة إدارة الطلاب'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة إدارة الطلاب
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => StudentManagementScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Finance report'),
+              title: Text('تقرير المالية'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة تقرير المالية
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FinanceReportScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Attendance report'),
+              title: Text('تقرير الحضور'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة تقرير الحضور
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => AttendanceReportScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Archived Students'),
+              title: Text('الطلاب المؤرشفين'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة الطلاب المؤرشفين
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ArchivedStudentsScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
             ListTile(
-              title: Text('Log Out'),
+              title: Text('تسجيل الخروج'),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => LoginScreen(),
-                    ),
-                  );
+                  ),
+                );
               },
             ),
           ],
@@ -107,7 +109,7 @@ class ArchivedStudentsScreen extends StatelessWidget {
           final archivedStudents = snapshot.data!.docs;
 
           if (archivedStudents.isEmpty) {
-            return Center(child: Text('No archived students.'));
+            return Center(child: Text('لا يوجد طلاب مؤرشفين.'));
           }
 
           return ListView.builder(
@@ -127,25 +129,25 @@ class ArchivedStudentsScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Card(
                   child: ExpansionTile(
-                    title: Text('Name: $studentName'),
+                    title: Text('الاسم: $studentName'),
                     children: [
                       ListTile(
-                        title: Text('Birthday: $studentBirthday'),
+                        title: Text('تاريخ الميلاد: $studentBirthday'),
                       ),
                       ListTile(
-                        title: Text('Class: $studentClass'),
+                        title: Text('الصف: $studentClass'),
                       ),
                       ListTile(
-                        title: Text('Fees: $studentFees'),
+                        title: Text('الرسوم: $studentFees'),
                       ),
                       ListTile(
-                        title: Text('Fees Left: $studentFeesLeft'),
+                        title: Text('الرسوم المتبقية: $studentFeesLeft'),
                       ),
                       ListTile(
-                        title: Text('Installments: $studentInstallments'),
+                        title: Text('الأقساط: $studentInstallments'),
                       ),
                       ListTile(
-                        title: Text('Installments Left: $studentInstallmentsLeft'),
+                        title: Text('الأقساط المتبقية: $studentInstallmentsLeft'),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -154,7 +156,7 @@ class ArchivedStudentsScreen extends StatelessWidget {
                             onPressed: () async {
                               await unarchiveStudent(studentId, studentData);
                             },
-                            child: Text('Unarchive'), // Button to unarchive the student
+                            child: Text('إلغاء الأرشفة'), // زر لإلغاء الأرشفة
                           ),
                         ],
                       ),
@@ -166,21 +168,22 @@ class ArchivedStudentsScreen extends StatelessWidget {
           );
         },
       ),
+      ),
     );
   }
 
   Future<void> unarchiveStudent(String studentId, Map<String, dynamic> studentData) async {
     try {
-      // Create a reference to the "Students" collection
+      // إنشاء مرجع إلى مجموعة "الطلاب"
       final studentsCollection = FirebaseFirestore.instance.collection('Students');
 
-      // Add the student data to the "Students" collection
+      // أضف بيانات الطالب إلى مجموعة "الطلاب"
       await studentsCollection.doc(studentId).set(studentData);
 
-      // Delete the student from the "Archived" collection
+      // احذف الطالب من مجموعة "Archived"
       await FirebaseFirestore.instance.collection('Archived').doc(studentId).delete();
     } catch (e) {
-      print('Error unarchiving student: $e');
+      print('حدث خطأ أثناء إلغاء الأرشفة: $e');
     }
   }
 }

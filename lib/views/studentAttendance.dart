@@ -20,145 +20,147 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   late QRViewController controller;
 
-  String selectedClass = "kg1"; // Default class selection
-  String scanResultMessage = ''; // Message to show after scanning
-  bool isScanningEnabled = true; // Control flag for scanning frequency
-  Set<String> attendedStudents = {}; // Use a Set to store attended student names
+  String selectedClass = "kg1"; // تحديد الفصل الافتراضي
+  String scanResultMessage = ''; // رسالة لعرضها بعد الفحص
+  bool isScanningEnabled = true; // علم التحكم في تكرار الفحص
+  Set<String> attendedStudents = {}; // استخدام مجموعة لتخزين أسماء الطلاب الحاضرين
 
   @override
   Widget build(BuildContext context) {
-    final displayName = widget.user?.displayName ?? "User";
+    final displayName = widget.user?.displayName ?? "المستخدم";
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Attendance Screen'),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Moderator Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+    return Directionality(
+      textDirection: TextDirection.rtl, // تحديد اتجاه النص إلى اليمين (RTL)
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('شاشة الحضور'),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.purple,
+                ),
+                child: Text(
+                  'القائمة للمشرف',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.navigate_next),
-              title: Text('Attendance'),
-              onTap: () {
-                // Close the drawer and navigate to the studentAttendance
-                Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => StudentAttendanceScreen(user: null),
-                ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.manage_accounts), // Icon for Student Management
-              title: Text('Student Add'), // Text for Student Management
-              onTap: () {
-                // Close the drawer and navigate to the StudentAddingScreen
-                Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => StudentAddingScreen(),
-                ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.payment_sharp), // Icon for Student Management
-              title: Text('Finance'), // Text for Student Management
-              onTap: () {
-                // Close the drawer and navigate to the StudentManagementScreen
-                Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => InstallmentsScreen(),
-                ));
-              },
-            ),
-            ListTile(
-              title: Text('Log Out'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
-                    ),
-                  );
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Welcome to the Attendance Screen!'),
-            Text('User: $displayName'),
-            SizedBox(height: 20),
-            Container(
-              width: 300,
-              height: 300,
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    flex: 5,
-                    child: QRView(
-                      key: qrKey,
-                      onQRViewCreated: _onQRViewCreated,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Center(
-                      child: Text(scanResultMessage),
-                    ),
-                  ),
-                ],
+              ListTile(
+                leading: Icon(Icons.navigate_next),
+                title: Text('الحضور'),
+                onTap: () {
+                  // إغلاق القائمة والانتقال إلى شاشة حضور الطلاب
+                  Navigator.pop(context);
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => StudentAttendanceScreen(user: null),
+                  ));
+                },
               ),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Choose Class:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: selectedClass,
-              onChanged: (newValue) {
-                setState(() {
-                  selectedClass = newValue!;
-                });
-              },
-              items: <String>['kg1', 'kg2', 'pre-kg']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Attended Students:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: attendedStudents.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(attendedStudents.elementAt(index) ?? ''),
+              ListTile(
+                leading: Icon(Icons.manage_accounts), // أيقونة إدارة الطلاب
+                title: Text('إضافة طالب'), // نص إدارة الطلاب
+                onTap: () {
+                  // إغلاق القائمة والانتقال إلى شاشة إضافة الطالب
+                  Navigator.pop(context);
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => StudentAddingScreen(),
+                  ));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.payment_sharp), // أيقونة الأمور المالية
+                title: Text('الأمور المالية'), // نص الأمور المالية
+                onTap: () {
+                  // إغلاق القائمة والانتقال إلى شاشة إدارة الاقساط
+                  Navigator.pop(context);
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => InstallmentsScreen(),
+                  ));
+                },
+              ),
+              ListTile(
+                title: Text('تسجيل الخروج'),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(),
+                    ),
                   );
                 },
               ),
-            ),
-          ],
+            ],
+          ),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('مرحبًا بك في شاشة الحضور!'),
+              SizedBox(height: 20),
+              Container(
+                width: 300,
+                height: 300,
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 5,
+                      child: QRView(
+                        key: qrKey,
+                        onQRViewCreated: _onQRViewCreated,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Center(
+                        child: Text(scanResultMessage),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'اختر الفصل:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              DropdownButton<String>(
+                value: selectedClass,
+                onChanged: (newValue) {
+                  setState(() {
+                    selectedClass = newValue!;
+                  });
+                },
+                items: <String>['kg1', 'kg2', 'pre-kg']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'الطلاب الحاضرين:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: attendedStudents.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(attendedStudents.elementAt(index) ?? ''),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -170,7 +172,7 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
       final scannedData = scanData.code;
 
       if (isScanningEnabled && scannedData != null) {
-        isScanningEnabled = false; // Disable scanning temporarily
+        isScanningEnabled = false; // تعطيل الفحص مؤقتًا
 
         final studentName = await getStudentNameFromFirestore(scannedData);
         if (studentName != null) {
@@ -178,25 +180,25 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
           if (studentClass != null) {
             if (studentClass == selectedClass) {
               if (!await isStudentAlreadyMarked(studentName)) {
-                attendedStudents.add(studentName); // Update the attended students list
+                attendedStudents.add(studentName); // تحديث قائمة الطلاب الحاضرين
                 await markAttendance(selectedClass, studentName);
                 setState(() {
-                  scanResultMessage = "Scanned Successfully";
+                  scanResultMessage = "تم الفحص بنجاح";
                 });
               } else {
                 setState(() {
-                  scanResultMessage = "Already Scanned";
+                  scanResultMessage = "تم الفحص مسبقًا";
                 });
               }
             } else {
               setState(() {
-                scanResultMessage = "Wrong Class";
+                scanResultMessage = "فصل خاطئ";
               });
             }
           }
         }
 
-        // Enable scanning after a delay of 2 seconds
+        // تمكين الفحص بعد تأخير 2 ثانية
         Future.delayed(Duration(seconds: 2), () {
           isScanningEnabled = true;
         });
@@ -214,7 +216,7 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
         return studentName;
       }
     } catch (e) {
-      print('Error fetching student data: $e');
+      print('خطأ في جلب بيانات الطالب: $e');
     }
     return null;
   }
@@ -229,7 +231,7 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
         return studentClass;
       }
     } catch (e) {
-      print('Error fetching student data: $e');
+      print('خطأ في جلب بيانات الطالب: $e');
     }
     return null;
   }
@@ -245,13 +247,13 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
 
     final studentAttendanceData = {
       'studentName': studentName,
-      'status': 'present',
+      'status': 'حاضر',
     };
 
     if (existingData.exists) {
       final updatedData = existingData.data() as Map<String, dynamic>;
 
-      // Ensure that the selected class subcollection exists
+      // التأكد من وجود مجموعة الفصل المحددة
       if (!updatedData.containsKey(selectedClass)) {
         updatedData[selectedClass] = {
           'attendanceData': [studentAttendanceData],
@@ -263,7 +265,7 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
 
       await attendanceDocRef.update(updatedData);
     } else {
-      // Create a new attendance record for the selected date
+      // إنشاء سجل حضور جديد للتاريخ المحدد
       final newAttendanceData = {
         selectedClass: {
           'attendanceData': [studentAttendanceData],
@@ -289,7 +291,7 @@ class _StudentAttendanceScreenState extends State<StudentAttendanceScreen> {
       if (updatedData.containsKey(selectedClass)) {
         final classAttendanceData = updatedData[selectedClass]['attendanceData'] as List<dynamic>;
 
-        // Check if the student name is already present in the attendance data
+        // التحقق مما إذا كان اسم الطالب موجودًا بالفعل في بيانات الحضور
         return classAttendanceData.any((entry) => entry['studentName'] == studentName);
       }
     }

@@ -61,9 +61,11 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Directionality(
+      textDirection: TextDirection.rtl, // تعيين اتجاه النص إلى اليمين لليسار (RTL)
+      child: Scaffold(
       appBar: AppBar(
-        title: Text('Student Management'),
+        title: Text('إدارة الطلاب'),
         
       ),
       drawer: Drawer(
@@ -72,10 +74,10 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.purple,
               ),
               child: Text(
-                'Admin Menu',
+                'قائمة المشرف',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -83,9 +85,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               ),
             ),
             ListTile(
-              title: Text('User Management Screen'),
+              title: Text('شاشة إدارة المستخدمين'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة إدارة المستخدمين
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => userManagementScreen(),
@@ -94,9 +96,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               },
             ),
             ListTile(
-              title: Text('Student Management Screen'),
+              title: Text('شاشة إدارة الطلاب'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة إدارة الطلاب
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => StudentManagementScreen(),
@@ -105,9 +107,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               },
             ),
             ListTile(
-              title: Text('Finance report'),
+              title: Text('تقرير مالي'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة التقرير المالي
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => FinanceReportScreen(),
@@ -116,9 +118,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               },
             ),
             ListTile(
-              title: Text('Attendance report'),
+              title: Text('تقرير الحضور'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة تقرير الحضور
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => AttendanceReportScreen(),
@@ -127,9 +129,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               },
             ),
             ListTile(
-              title: Text('Archived Students'),
+              title: Text('الطلاب المؤرشفين'),
               onTap: () {
-                // Navigate to the ModeratorScreen
+                // انتقل إلى شاشة الطلاب المؤرشفين
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ArchivedStudentsScreen(),
@@ -138,7 +140,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               },
             ),
             ListTile(
-              title: Text('Log Out'),
+              title: Text('تسجيل الخروج'),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -157,12 +159,12 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Welcome to the Student Management Page!',
+                'مرحبًا بك في صفحة إدارة الطلاب!',
                 style: TextStyle(fontSize: 24),
               ),
               SizedBox(height: 20),
               Text(
-                'Students:',
+                'الطلاب:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               StreamBuilder<QuerySnapshot>(
@@ -197,46 +199,46 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Card(
                           child: ExpansionTile(
-                            title: Text('Name: $studentName'),
+                            title: Text('الاسم: $studentName'),
                             children: [
                               ListTile(
-                                title: Text('Birthday: $studentBirthday'),
+                                title: Text('تاريخ الميلاد: $studentBirthday'),
                               ),
                               ListTile(
-                                title: Text('Class: $studentClass'),
+                                title: Text('الصف: $studentClass'),
                               ),
                               ListTile(
-                                title: Text('Fees: $studentFees'),
+                                title: Text('الرسوم: $studentFees'),
                               ),
                               ListTile(
-                                title: Text('Fees Left: $studentFeesLeft'),
+                                title: Text('الرسوم المتبقية: $studentFeesLeft'),
                               ),
                               ListTile(
-                                title: Text('Installments: $studentInstallments'),
+                                title: Text('الأقساط: $studentInstallments'),
                               ),
                               ListTile(
-                                title: Text('Installments Left: $studentInstallmentsLeft'),
+                                title: Text('الأقساط المتبقية: $studentInstallmentsLeft'),
                               ),
                               ListTile(
-                                title: Text("Father's Name: $father"),
+                                title: Text('اسم الأب: $father'),
                               ),
                               ListTile(
-                                title: Text("Father's Phone: $fatherPhone"),
+                                title: Text('هاتف الأب: $fatherPhone'),
                               ),
                               ListTile(
-                                title: Text("Mother's Name: $mother"),
+                                title: Text('اسم الأم: $mother'),
                               ),
                               ListTile(
-                                title: Text("Mother's Phone: $motherPhone"),
+                                title: Text('هاتف الأم: $motherPhone'),
                               ),
                               ListTile(
-                                title: Text("Address: $address"),
+                                title: Text('العنوان: $address'),
                               ),
                               ListTile(
-                                title: Text('Nearby Phone 1: $nearbyPhone1'),
+                                title: Text('هاتف قريب 1: $nearbyPhone1'),
                               ),
                               ListTile(
-                                title: Text('Nearby Phone 2: $nearbyPhone2'),
+                                title: Text('هاتف قريب 2: $nearbyPhone2'),
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -247,7 +249,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                                       if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
                                         return Image.network(
                                           snapshot.data!,
-                                          width: 50, // Adjust the size as needed
+                                          width: 50, // تعديل الحجم حسب الحاجة
                                           height: 50,
                                         );
                                       } else {
@@ -292,9 +294,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                                     },
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.archive), // Add the Archive icon here
+                                    icon: Icon(Icons.archive), // أضف أيقونة الأرشفة هنا
                                     onPressed: () async {
-                                      await archiveStudent(studentId, studentData); // Archive the student
+                                      await archiveStudent(studentId, studentData); // قم بأرشفة الطالب
                                     },
                                   ),
                                 ],
@@ -309,20 +311,20 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
               ),
               SizedBox(height: 20),
               Text(
-                'Edit Student:',
+                'تعديل بيانات الطالب:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               ExpansionTile(
-                title: Text('Edit Student Details'),
+                title: Text('تعديل تفاصيل الطالب'),
                 children: [
                   TextFormField(
                     controller: nameController,
-                    decoration: InputDecoration(labelText: 'Name'),
+                    decoration: InputDecoration(labelText: 'الاسم'),
                   ),
                   TextFormField(
                     controller: birthdayController,
-                    decoration: InputDecoration(labelText: 'Birthday'),
-                    onTap: () => _selectDate(context), // Show date picker when tapped
+                    decoration: InputDecoration(labelText: 'تاريخ الميلاد'),
+                    onTap: () => _selectDate(context), // عرض منتقى التاريخ عند النقر
                   ),
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance.collection('Classes').snapshots(),
@@ -348,7 +350,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                       }
 
                       return DropdownButtonFormField<String>(
-                        decoration: InputDecoration(labelText: 'Class'),
+                        decoration: InputDecoration(labelText: 'الصف'),
                         value: selectedClassId,
                         items: classDropdownItems,
                         onChanged: (value) {
@@ -361,51 +363,51 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                   ),
                   TextFormField(
                     controller: feesController,
-                    decoration: InputDecoration(labelText: 'Fees'),
+                    decoration: InputDecoration(labelText: 'الرسوم'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: feesLeftController,
-                    decoration: InputDecoration(labelText: 'Fees Left'),
+                    decoration: InputDecoration(labelText: 'الرسوم المتبقية'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: installmentsController,
-                    decoration: InputDecoration(labelText: 'Installments'),
+                    decoration: InputDecoration(labelText: 'الأقساط'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: installmentsLeftController,
-                    decoration: InputDecoration(labelText: 'Installments Left'),
+                    decoration: InputDecoration(labelText: 'الأقساط المتبقية'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: fatherController,
-                    decoration: InputDecoration(labelText: "Father's Name"),
+                    decoration: InputDecoration(labelText: 'اسم الأب'),
                   ),
                   TextFormField(
                     controller: fatherPhoneController,
-                    decoration: InputDecoration(labelText: "Father's Phone"),
+                    decoration: InputDecoration(labelText: 'هاتف الأب'),
                   ),
                   TextFormField(
                     controller: motherController,
-                    decoration: InputDecoration(labelText: "Mother's Name"),
+                    decoration: InputDecoration(labelText: 'اسم الأم'),
                   ),
                   TextFormField(
                     controller: motherPhoneController,
-                    decoration: InputDecoration(labelText: "Mother's Phone"),
+                    decoration: InputDecoration(labelText: 'هاتف الأم'),
                   ),
                   TextFormField(
                     controller: addressController,
-                    decoration: InputDecoration(labelText: 'Address'),
+                    decoration: InputDecoration(labelText: 'العنوان'),
                   ),
                   TextFormField(
                     controller: nearbyPhone1Controller,
-                    decoration: InputDecoration(labelText: 'Nearby Phone 1'),
+                    decoration: InputDecoration(labelText: 'هاتف قريب 1'),
                   ),
                   TextFormField(
                     controller: nearbyPhone2Controller,
-                    decoration: InputDecoration(labelText: 'Nearby Phone 2'),
+                    decoration: InputDecoration(labelText: 'هاتف قريب 2'),
                   ),
                   ElevatedButton(
                     onPressed: () async {
@@ -463,30 +465,30 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                             oldClassId = null;
                           });
                         } else {
-                          print('Error uploading QR code image.');
+                          print('خطأ في رفع صورة الرمز الاستجابي.');
                         }
                       }
                     },
-                    child: Text('Save Changes'),
+                    child: Text('حفظ التغييرات'),
                   ),
                 ],
               ),
               SizedBox(height: 20),
               Text(
-                'Add Student:',
+                'إضافة طالب جديد:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               ExpansionTile(
-                title: Text('Add New Student'),
+                title: Text('إضافة طالب جديد'),
                 children: [
                   TextFormField(
                     controller: nameController,
-                    decoration: InputDecoration(labelText: 'Name'),
+                    decoration: InputDecoration(labelText: 'الاسم'),
                   ),
                   TextFormField(
                     controller: birthdayController,
-                    decoration: InputDecoration(labelText: 'Birthday'),
-                    onTap: () => _selectDate(context), // Show date picker when tapped
+                    decoration: InputDecoration(labelText: 'تاريخ الميلاد'),
+                    onTap: () => _selectDate(context), // عرض منتقى التاريخ عند النقر
                   ),
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance.collection('Classes').snapshots(),
@@ -512,7 +514,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                       }
 
                       return DropdownButtonFormField<String>(
-                        decoration: InputDecoration(labelText: 'Class'),
+                        decoration: InputDecoration(labelText: 'الصف'),
                         value: selectedClassId,
                         items: classDropdownItems,
                         onChanged: (value) {
@@ -525,51 +527,51 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                   ),
                   TextFormField(
                     controller: feesController,
-                    decoration: InputDecoration(labelText: 'Fees'),
+                    decoration: InputDecoration(labelText: 'الرسوم'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: feesLeftController,
-                    decoration: InputDecoration(labelText: 'Fees Left'),
+                    decoration: InputDecoration(labelText: 'الرسوم المتبقية'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: installmentsController,
-                    decoration: InputDecoration(labelText: 'Installments'),
+                    decoration: InputDecoration(labelText: 'الأقساط'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: installmentsLeftController,
-                    decoration: InputDecoration(labelText: 'Installments Left'),
+                    decoration: InputDecoration(labelText: 'الأقساط المتبقية'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
                     controller: fatherController,
-                    decoration: InputDecoration(labelText: "Father's Name"),
+                    decoration: InputDecoration(labelText: 'اسم الأب'),
                   ),
                   TextFormField(
                     controller: fatherPhoneController,
-                    decoration: InputDecoration(labelText: "Father's Phone"),
+                    decoration: InputDecoration(labelText: 'هاتف الأب'),
                   ),
                   TextFormField(
                     controller: motherController,
-                    decoration: InputDecoration(labelText: "Mother's Name"),
+                    decoration: InputDecoration(labelText: 'اسم الأم'),
                   ),
                   TextFormField(
                     controller: motherPhoneController,
-                    decoration: InputDecoration(labelText: "Mother's Phone"),
+                    decoration: InputDecoration(labelText: 'هاتف الأم'),
                   ),
                   TextFormField(
                     controller: addressController,
-                    decoration: InputDecoration(labelText: 'Address'),
+                    decoration: InputDecoration(labelText: 'العنوان'),
                   ),
                   TextFormField(
                     controller: nearbyPhone1Controller,
-                    decoration: InputDecoration(labelText: 'Nearby Phone 1'),
+                    decoration: InputDecoration(labelText: 'هاتف قريب 1'),
                   ),
                   TextFormField(
                     controller: nearbyPhone2Controller,
-                    decoration: InputDecoration(labelText: 'Nearby Phone 2'),
+                    decoration: InputDecoration(labelText: 'هاتف قريب 2'),
                   ),
                   ElevatedButton(
                     onPressed: () async {
@@ -588,43 +590,42 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                         'address': addressController.text,
                         'nearbyPhone1': nearbyPhone1Controller.text,
                         'nearbyPhone2': nearbyPhone2Controller.text,
+                        'photoUrl': '', // سيتم تحديثها لاحقًا بعد رفع صورة الرمز الاستجابي
                       });
 
-                      if (newStudentDocRef != null) {
-                        final qrCodeImageUrl = await uploadQRCodeImage(newStudentDocRef.id);
+                      if (selectedClassId != null) {
+                        FirebaseFirestore.instance.collection('Classes').doc(selectedClassId!).update({
+                          'students': FieldValue.arrayUnion([nameController.text]),
+                        });
+                      }
 
-                        if (qrCodeImageUrl != null) {
-                          await newStudentDocRef.update({'photoUrl': qrCodeImageUrl});
-                        } else {
-                          print('Error uploading QR code image for the new student.');
-                        }
+                      final qrCodeImageUrl = await uploadQRCodeImage(newStudentDocRef.id);
 
-                        if (selectedClassId != null) {
-                          FirebaseFirestore.instance.collection('Classes').doc(selectedClassId!).update({
-                            'students': FieldValue.arrayUnion([nameController.text]),
-                          });
-                        }
+                      if (qrCodeImageUrl != null) {
+                        newStudentDocRef.update({'photoUrl': qrCodeImageUrl});
 
-                        nameController.clear();
-                        birthdayController.clear();
-                        classController.clear();
-                        feesController.clear();
-                        feesLeftController.clear();
-                        installmentsController.clear();
-                        installmentsLeftController.clear();
-                        fatherController.clear();
-                        fatherPhoneController.clear();
-                        motherController.clear();
-                        motherPhoneController.clear();
-                        addressController.clear();
-                        nearbyPhone1Controller.clear();
-                        nearbyPhone2Controller.clear();
-                        selectedClassId = null;
+                        setState(() {
+                          nameController.clear();
+                          birthdayController.clear();
+                          classController.clear();
+                          feesController.clear();
+                          feesLeftController.clear();
+                          installmentsController.clear();
+                          installmentsLeftController.clear();
+                          fatherController.clear();
+                          fatherPhoneController.clear();
+                          motherController.clear();
+                          motherPhoneController.clear();
+                          addressController.clear();
+                          nearbyPhone1Controller.clear();
+                          nearbyPhone2Controller.clear();
+                          selectedClassId = null;
+                        });
                       } else {
-                        print('Error adding new student to Firestore.');
+                        print('خطأ في رفع صورة الرمز الاستجابي.');
                       }
                     },
-                    child: Text('Add Student'),
+                    child: Text('إضافة طالب جديد'),
                   ),
                 ],
               ),
@@ -632,100 +633,100 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
           ),
         ),
       ),
-    );
-  }
- 
+    ),
+  );
+ }
+}
 
-  Future<void> deleteQRCodeImage(String studentId) async {
-    try {
-      final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
-      await storageRef.delete();
-    } catch (e) {
-      print('Error deleting QR code image: $e');
-    }
-  }
-
-  Future<String?> uploadQRCodeImage(String studentId) async {
-    try {
-      final qrImageData = await generateQRCode(studentId);
-      final tempDir = await getTemporaryDirectory();
-      final file = File('${tempDir.path}/$studentId.png');
-      await file.writeAsBytes(qrImageData);
-
-      final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
-
-      await storageRef.putFile(file);
-
-      final String url = await storageRef.getDownloadURL();
-
-      return url;
-    } catch (e) {
-      print('Error generating/uploading QR code image: $e');
-      return null;
-    }
-  }
-
-  Future<Uint8List> generateQRCode(String studentId) async {
-    final qrCode = QrPainter(
-      data: studentId,
-      version: QrVersions.auto,
-      errorCorrectionLevel: QrErrorCorrectLevel.L,
-      color: Color(0xff000000),
-      emptyColor: Color(0xffffffff),
-    );
-
-    final size = 300.0;
-    final recorder = PictureRecorder();
-    final canvas = Canvas(recorder, Rect.fromPoints(Offset(0, 0), Offset(size, size)));
-
-    qrCode.paint(canvas, Rect.fromPoints(Offset(0, 0), Offset(size, size)).size);
-
-    final picture = recorder.endRecording();
-    final img = await picture.toImage(size.toInt(), size.toInt());
-    final imgData = await img.toByteData(format: ImageByteFormat.png);
-
-    return imgData!.buffer.asUint8List();
-  }
-
-  Future<void> deleteStudentAndQR(String studentId, String studentName) async {
-    try {
-      // Get the class ID associated with the student
-      final studentSnapshot = await FirebaseFirestore.instance.collection('Students').doc(studentId).get();
-      final studentData = studentSnapshot.data() as Map<String, dynamic>;
-      final studentClassId = studentData['class'];
-
-      // Delete the student document
-      await FirebaseFirestore.instance.collection('Students').doc(studentId).delete();
-
-      // Delete the QR code image
-      await deleteQRCodeImage(studentId);
-
-      // If the student was associated with a class, remove the student's name from the class document
-      if (studentClassId != null) {
-        await FirebaseFirestore.instance.collection('Classes').doc(studentClassId).update({
-          'students': FieldValue.arrayRemove([studentName]),
-        });
-      }
-    } catch (e) {
-      print('Error deleting student and QR code: $e');
-    }
-  }
-  Future<void> archiveStudent(String studentId, Map<String, dynamic> studentData) async {
+Future<void> deleteQRCodeImage(String studentId) async {
   try {
-    // Create a reference to the "Archived" collection
-    final archivedCollection = FirebaseFirestore.instance.collection('Archived');
-
-    // Add the student data to the "Archived" collection
-    await archivedCollection.doc(studentId).set(studentData);
-
-    // Delete the student from the "Students" collection
-    await FirebaseFirestore.instance.collection('Students').doc(studentId).delete();
-
-    // Delete the QR code image
-    await deleteQRCodeImage(studentId);
+    final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
+    await storageRef.delete();
   } catch (e) {
-    print('Error archiving student: $e');
+    print('خطأ في حذف صورة الرمز الاستجابي: $e');
   }
 }
 
+Future<String?> uploadQRCodeImage(String studentId) async {
+  try {
+    final qrImageData = await generateQRCode(studentId);
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/$studentId.png');
+    await file.writeAsBytes(qrImageData);
+
+    final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
+
+    await storageRef.putFile(file);
+
+    final String url = await storageRef.getDownloadURL();
+
+    return url;
+  } catch (e) {
+    print('خطأ في إنشاء/رفع صورة الرمز الاستجابي: $e');
+    return null;
+  }
+}
+
+Future<Uint8List> generateQRCode(String studentId) async {
+  final qrCode = QrPainter(
+    data: studentId,
+    version: QrVersions.auto,
+    errorCorrectionLevel: QrErrorCorrectLevel.L,
+    color: Color(0xff000000),
+    emptyColor: Color(0xffffffff),
+  );
+
+  final size = 300.0;
+  final recorder = PictureRecorder();
+  final canvas = Canvas(recorder, Rect.fromPoints(Offset(0, 0), Offset(size, size)));
+
+  qrCode.paint(canvas, Rect.fromPoints(Offset(0, 0), Offset(size, size)).size);
+
+  final picture = recorder.endRecording();
+  final img = await picture.toImage(size.toInt(), size.toInt());
+  final imgData = await img.toByteData(format: ImageByteFormat.png);
+
+  return imgData!.buffer.asUint8List();
+}
+
+Future<void> deleteStudentAndQR(String studentId, String studentName) async {
+  try {
+    // الحصول على معرف الصف المرتبط بالطالب
+    final studentSnapshot = await FirebaseFirestore.instance.collection('Students').doc(studentId).get();
+    final studentData = studentSnapshot.data() as Map<String, dynamic>;
+    final studentClassId = studentData['class'];
+
+    // حذف مستند الطالب
+    await FirebaseFirestore.instance.collection('Students').doc(studentId).delete();
+
+    // حذف صورة الرمز الاستجابي
+    await deleteQRCodeImage(studentId);
+
+    // إذا كان الطالب مرتبطًا بصف معين، قم بإزالة اسم الطالب من مستند الصف
+    if (studentClassId != null) {
+      await FirebaseFirestore.instance.collection('Classes').doc(studentClassId).update({
+        'students': FieldValue.arrayRemove([studentName]),
+      });
+    }
+  } catch (e) {
+    print('خطأ في حذف الطالب وصورة الرمز الاستجابي: $e');
+  }
+}
+
+Future<void> archiveStudent(String studentId, Map<String, dynamic> studentData) async {
+  try {
+    // إنشاء مرجع للمجموعة المؤرشفة
+    final archivedCollection = FirebaseFirestore.instance.collection('Archived');
+
+    // إضافة بيانات الطالب إلى مجموعة "المؤرشفة"
+    await archivedCollection.doc(studentId).set(studentData);
+
+    // حذف الطالب من مجموعة "الطلاب"
+    await FirebaseFirestore.instance.collection('Students').doc(studentId).delete();
+
+    // حذف صورة الرمز الاستجابي
+    await deleteQRCodeImage(studentId);
+  } catch (e) {
+    print('خطأ في أرشفة الطالب: $e');
+  }
 }
