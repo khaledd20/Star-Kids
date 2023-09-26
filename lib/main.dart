@@ -17,38 +17,34 @@ void main() async {
 
   runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'عنوان تطبيقك',
-      theme: ThemeData(
-    useMaterial3: true,
-    
-    // Define the default brightness and colors.
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.purple,
-      // ···
-      brightness: Brightness.dark,
-    ),
+    double screenWidth = MediaQuery.of(context).size.width;
 
-    // Define the default `TextTheme`. Use this to specify the default
-    // text styling for headlines, titles, bodies of text, and more.
-    textTheme: TextTheme(
-      displayLarge: const TextStyle(
-        fontSize: 72,
-        fontWeight: FontWeight.bold,
+    return MaterialApp(
+      title: 'star kids',
+      theme: ThemeData(
+        useMaterial3: true,
+        // Define the default brightness and colors.
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.purple,
+          brightness: Brightness.dark,
+        ),
+        // Define the default `TextTheme`.
+        textTheme: TextTheme(
+          displayLarge: TextStyle(
+            fontSize: screenWidth >= 600 ? 72 : 48, // Adjust font size for larger screens
+            fontWeight: FontWeight.bold,
+          ),
+          titleLarge: GoogleFonts.oswald(
+            fontSize: screenWidth >= 600 ? 30 : 20, // Adjust font size for larger screens
+            fontStyle: FontStyle.italic,
+          ),
+          bodyMedium: GoogleFonts.merriweather(),
+          displaySmall: GoogleFonts.pacifico(),
+        ),
       ),
-      // ···
-      titleLarge: GoogleFonts.oswald(
-        fontSize: 30,
-        fontStyle: FontStyle.italic,
-      ),
-      bodyMedium: GoogleFonts.merriweather(),
-      displaySmall: GoogleFonts.pacifico(),
-    ),
-  ),
       builder: EasyLoading.init(), // تهيئة EasyLoading
       home: LoginScreen(),
     );

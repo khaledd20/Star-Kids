@@ -6,17 +6,17 @@
     <title>Welcome to Firebase Hosting</title>
 
     <!-- update the version number as needed -->
-    <script defer src="/__/firebase/10.3.1/firebase-app-compat.js"></script>
+    <script defer src="/__/firebase/10.4.0/firebase-app-compat.js"></script>
     <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/10.3.1/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/10.3.1/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/10.3.1/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/10.3.1/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/10.3.1/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/10.3.1/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/10.3.1/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/10.3.1/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/10.3.1/firebase-performance-compat.js"></script>
+    <script defer src="/__/firebase/10.4.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/10.4.0/firebase-database-compat.js"></script>
+    <script defer src="/__/firebase/10.4.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/10.4.0/firebase-functions-compat.js"></script>
+    <script defer src="/__/firebase/10.4.0/firebase-messaging-compat.js"></script>
+    <script defer src="/__/firebase/10.4.0/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/10.4.0/firebase-analytics-compat.js"></script>
+    <script defer src="/__/firebase/10.4.0/firebase-remote-config-compat.js"></script>
+    <script defer src="/__/firebase/10.4.0/firebase-performance-compat.js"></script>
     <!-- 
       initialize the SDK after all desired features are loaded, set useEmulator to false
       to avoid connecting the SDK to running emulators.
@@ -84,6 +84,30 @@
           loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
         }
       });
+    </script>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+    
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyDwuf4ASxGVHQDpJYG8Nba2NhMXlLXHvk0",
+        authDomain: "star-kids-c24da.firebaseapp.com",
+        databaseURL: "https://star-kids-c24da-default-rtdb.firebaseio.com",
+        projectId: "star-kids-c24da",
+        storageBucket: "star-kids-c24da.appspot.com",
+        messagingSenderId: "35723641214",
+        appId: "1:35723641214:web:97c2b6a4bb92f95e5b332f",
+        measurementId: "G-G56CQ5J41Y"
+      };
+    
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
     </script>
   </body>
 </html>

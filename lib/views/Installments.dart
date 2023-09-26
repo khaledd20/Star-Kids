@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'installment_receipt.dart';
 import 'login_screen.dart';
 import 'studentAdd.dart';
 import 'studentAttendance.dart';
@@ -225,7 +226,7 @@ class _InstallmentsScreenState extends State<InstallmentsScreen> {
                       'receiptNumber': receiptNumber,
                     });
 
-                    // Retrieve the student's fees and feesLeft from the Students collection
+                    // Retrieve the student's data from the Students collection
                     final studentSnapshot = await _firestore
                         .collection('Students')
                         .where('name', isEqualTo: studentList.isNotEmpty ? studentList[0] : '')
@@ -234,21 +235,37 @@ class _InstallmentsScreenState extends State<InstallmentsScreen> {
                     if (studentSnapshot.docs.isNotEmpty) {
                       final studentData = studentSnapshot.docs[0].data() as Map<String, dynamic>;
                       final feesLeft = studentData['feesLeft'] ?? 0.0;
+                      final studentFees = studentData['fees'] ?? 0.0;
+                      final installments = studentData['installments'] ?? 0;
+                      final installmentsLeft = studentData['installmentsLeft'] ?? 0;
 
                       // Calculate the new feesLeft value
                       final newFeesLeft = feesLeft - amount;
 
+                      // Calculate the new installmentsLeft value
+                      final newInstallmentsLeft = installments - 1;
+
                       // Update the feesLeft field in the Students collection
                       await studentSnapshot.docs[0].reference.update({'feesLeft': newFeesLeft});
 
-                      // Get the current value of the installments field
-                      final installmentsLeft = studentData['installmentsLeft'] ?? 0;
-
-                      // Calculate the new value of installmentsLeft
-                      final newInstallmentsLeft  = installmentsLeft - 1;
-
                       // Update the installmentsLeft field in the Students collection
-                      await studentSnapshot.docs[0].reference.update({'installmentsLeft': newInstallmentsLeft });
+                      await studentSnapshot.docs[0].reference.update({'installmentsLeft': newInstallmentsLeft});
+
+                      // Navigate to the InstallmentReceiptScreen with additional student data
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => InstallmentReceiptScreen(
+                            selectedClass: selectedClass ?? '', // Provide a default value
+                            studentName: studentList.isNotEmpty ? studentList[0] : '',
+                            amount: amount,
+                            date: date,
+                            receiptNumber: receiptNumber,
+                            studentFeesLeft: newFeesLeft,
+                            studentInstallments: installments,
+                            studentInstallmentsLeft: newInstallmentsLeft,
+                          ),
+                        ),
+                      );
                     }
 
                     // Clear the text controllers after saving
