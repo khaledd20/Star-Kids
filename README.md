@@ -1,4 +1,4 @@
-# my_flutter_project
+# Star kids
 
 A new Flutter project.
 

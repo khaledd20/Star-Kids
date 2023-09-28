@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'dart:typed_data';
+import 'package:universal_html/html.dart' as html; // Import for web
 
 import 'archievedStudents.dart';
 import 'attendanceReport.dart';
@@ -74,7 +76,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.purple,
+                color: Color.fromARGB(255, 183, 189, 0),
               ),
               child: Text(
                 'قائمة المشرف',
@@ -243,20 +245,35 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  FutureBuilder<String?>(
-                                    future: uploadQRCodeImage(studentId),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
-                                        return Image.network(
+                                  FutureBuilder<Uint8List?>(
+                                  future: generateQRCode(studentId),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                            ConnectionState.done &&
+                                        snapshot.data != null) {
+                                      if (html.window.navigator.userAgent.contains('Edge')) {
+                                        // Edge browser workaround
+                                        final url = Uri.dataFromBytes(
                                           snapshot.data!,
-                                          width: 50, // تعديل الحجم حسب الحاجة
+                                          mimeType: 'image/png',
+                                        ).toString();
+                                        return Image.network(
+                                          url,
+                                          width: 50, // Adjust the size as needed
                                           height: 50,
                                         );
                                       } else {
-                                        return CircularProgressIndicator();
+                                        return Image.memory(
+                                          snapshot.data!,
+                                          width: 50, // Adjust the size as needed
+                                          height: 50,
+                                        );
                                       }
-                                    },
-                                  ),
+                                    } else {
+                                      return CircularProgressIndicator();
+                                    }
+                                  },
+                                ),
                                   IconButton(
                                     icon: Icon(Icons.edit),
                                     onPressed: () {
@@ -656,7 +673,7 @@ Future<String?> uploadQRCodeImage(String studentId) async {
 
     final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
 
-    await storageRef.putFile(file);
+      await storageRef.putData(qrImageData); // Use putData for web
 
     final String url = await storageRef.getDownloadURL();
 

@@ -44,6 +44,12 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Image.asset(
+                  'images/stark.png', // Replace with the path to your image asset
+                  width: 150, // Adjust the width as needed
+                  height: 150, // Adjust the height as needed
+                ),
+                SizedBox(height: 16), // Add some spacing
               TextField(
                 controller: usernameController,
                 decoration: InputDecoration(

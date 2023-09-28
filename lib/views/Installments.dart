@@ -51,8 +51,8 @@ class _InstallmentsScreenState extends State<InstallmentsScreen> {
             children: [
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.purple,
-                ),
+                color: Color.fromARGB(255, 183, 189, 0),
+              ),
                 child: Text(
                   'قائمة المشرف',
                   style: TextStyle(
