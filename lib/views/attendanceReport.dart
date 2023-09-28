@@ -35,7 +35,7 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.purple,
+                color: Color.fromARGB(255, 183, 189, 0),
               ),
               child: Text(
                 'قائمة المشرف',
@@ -113,9 +113,12 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
           ],
         ),
       ),
-      body: 
-      Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Padding(
+  padding: const EdgeInsets.all(16.0),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: <Widget>[
+      Expanded(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -188,6 +191,10 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
           ],
         ),
       ),
+    ],
+  ),
+),
+
       ),
     );
   }
