@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'dart:typed_data';
 import 'package:universal_html/html.dart' as html; // Import for web
 
 import 'archievedStudents.dart';
@@ -276,27 +275,28 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                                 ),
                                   IconButton(
                                     icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      setState(() {
-                                        currentlyEditingStudentId = studentId;
-                                        oldClassId = studentClass;
-                                      });
+                                   onPressed: () {
+                                    setState(() {
+                                      currentlyEditingStudentId = studentId;
+                                      oldClassId = studentClass;
+                                    });
 
-                                      nameController.text = studentName;
-                                      birthdayController.text = studentBirthday;
-                                      classController.text = studentClass;
-                                      feesController.text = studentFees;
-                                      feesLeftController.text = studentFeesLeft;
-                                      installmentsController.text = studentInstallments;
-                                      installmentsLeftController.text = studentInstallmentsLeft;
-                                      fatherController.text = father;
-                                      fatherPhoneController.text = fatherPhone;
-                                      motherController.text = mother;
-                                      motherPhoneController.text = motherPhone;
-                                      addressController.text = address;
-                                      nearbyPhone1Controller.text = nearbyPhone1;
-                                      nearbyPhone2Controller.text = nearbyPhone2;
-                                    },
+                                    nameController.text = studentName;
+                                    birthdayController.text = studentBirthday;
+                                    classController.text = studentClass;
+                                    feesController.text = studentFees.toString(); // Convert to string if necessary
+                                    feesLeftController.text = studentFeesLeft.toString(); // Convert to string if necessary
+                                    installmentsController.text = studentInstallments.toString();
+                                    installmentsLeftController.text = studentInstallmentsLeft.toString();
+                                    fatherController.text = father;
+                                    fatherPhoneController.text = fatherPhone;
+                                    motherController.text = mother;
+                                    motherPhoneController.text = motherPhone.toString();
+                                    addressController.text = address;
+                                    nearbyPhone1Controller.text = nearbyPhone1.toString();
+                                    nearbyPhone2Controller.text = nearbyPhone2.toString();
+                                  },
+
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.delete),
@@ -598,15 +598,15 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                         'class': selectedClassId,
                         'fees': double.parse(feesController.text),
                         'feesLeft': double.parse(feesLeftController.text),
-                        'installments': int.parse(installmentsController.text),
-                        'installmentsLeft': int.parse(installmentsLeftController.text),
+                        'installments': double.parse(installmentsController.text),
+                        'installmentsLeft': double.parse(installmentsLeftController.text),
                         'father': fatherController.text,
                         'fatherPhone': fatherPhoneController.text,
                         'mother': motherController.text,
-                        'motherPhone': motherPhoneController.text,
+                        'motherPhone': double.parse(motherPhoneController.text),
                         'address': addressController.text,
-                        'nearbyPhone1': nearbyPhone1Controller.text,
-                        'nearbyPhone2': nearbyPhone2Controller.text,
+                        'nearbyPhone1': double.parse(nearbyPhone1Controller.text),
+                        'nearbyPhone2': double.parse(nearbyPhone2Controller.text),
                         'photoUrl': '', // سيتم تحديثها لاحقًا بعد رفع صورة الرمز الاستجابي
                       });
 
@@ -667,13 +667,9 @@ Future<void> deleteQRCodeImage(String studentId) async {
 Future<String?> uploadQRCodeImage(String studentId) async {
   try {
     final qrImageData = await generateQRCode(studentId);
-    final tempDir = await getTemporaryDirectory();
-    final file = File('${tempDir.path}/$studentId.png');
-    await file.writeAsBytes(qrImageData);
-
     final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
 
-      await storageRef.putData(qrImageData); // Use putData for web
+    await storageRef.putData(qrImageData);
 
     final String url = await storageRef.getDownloadURL();
 
@@ -683,6 +679,7 @@ Future<String?> uploadQRCodeImage(String studentId) async {
     return null;
   }
 }
+
 
 Future<Uint8List> generateQRCode(String studentId) async {
   final qrCode = QrPainter(

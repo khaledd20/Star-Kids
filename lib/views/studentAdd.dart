@@ -257,96 +257,136 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                   'إضافة طالب:',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                ExpansionTile(
-                  title: Text('إضافة طالب جديد'),
-                  children: [
-                    TextFormField(
-                      controller: nameController,
-                      decoration: InputDecoration(labelText: 'الاسم'),
-                    ),
-                    TextFormField(
-                      controller: birthdayController,
-                      decoration: InputDecoration(labelText: 'تاريخ الميلاد'),
-                      onTap: () => _selectDate(context),
-                    ),
-                    TextFormField(
-                      controller: feesController,
-                      decoration: InputDecoration(labelText: 'الرسوم'),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextFormField(
-                      controller: feesLeftController,
-                      decoration: InputDecoration(labelText: 'الرسوم المتبقية'),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextFormField(
-                      controller: installmentsController,
-                      decoration: InputDecoration(labelText: 'الأقساط'),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextFormField(
-                      controller: installmentsLeftController,
-                      decoration: InputDecoration(labelText: 'الأقساط المتبقية'),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextFormField(
-                      controller: fatherController,
-                      decoration: InputDecoration(labelText: "اسم الأب"),
-                    ),
-                    TextFormField(
-                      controller: fatherPhoneController,
-                      decoration: InputDecoration(labelText: "هاتف الأب"),
-                    ),
-                    TextFormField(
-                      controller: motherController,
-                      decoration: InputDecoration(labelText: "اسم الأم"),
-                    ),
-                    TextFormField(
-                      controller: motherPhoneController,
-                      decoration: InputDecoration(labelText: "هاتف الأم"),
-                    ),
-                    TextFormField(
-                      controller: addressController,
-                      decoration: InputDecoration(labelText: 'العنوان'),
-                    ),
-                    TextFormField(
-                      controller: nearbyPhone1Controller,
-                      decoration: InputDecoration(labelText: 'الهاتف القريب 1'),
-                    ),
-                    TextFormField(
-                      controller: nearbyPhone2Controller,
-                      decoration: InputDecoration(labelText: 'الهاتف القريب 2'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final newStudentDocRef = await FirebaseFirestore.instance.collection('Students').add({
-                          'name': nameController.text,
-                          'birthday': birthdayController.text,
-                          'class': selectedClassId,
-                          'fees': double.parse(feesController.text),
-                          'feesLeft': double.parse(feesLeftController.text),
-                          'installments': int.parse(installmentsController.text),
-                          'installmentsLeft': int.parse(installmentsLeftController.text),
-                          'father': fatherController.text,
-                          'fatherPhone': fatherPhoneController.text,
-                          'mother': motherController.text,
-                          'motherPhone': motherPhoneController.text,
-                          'address': addressController.text,
-                          'nearbyPhone1': nearbyPhone1Controller.text,
-                          'nearbyPhone2': nearbyPhone2Controller.text,
+               ExpansionTile(
+                title: Text('إضافة طالب جديد'),
+                children: [
+                  TextFormField(
+                    controller: nameController,
+                    decoration: InputDecoration(labelText: 'الاسم'),
+                  ),
+                  TextFormField(
+                    controller: birthdayController,
+                    decoration: InputDecoration(labelText: 'تاريخ الميلاد'),
+                    onTap: () => _selectDate(context), // عرض منتقى التاريخ عند النقر
+                  ),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance.collection('Classes').snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return CircularProgressIndicator();
+                      }
+
+                      final classes = snapshot.data!.docs;
+                      List<DropdownMenuItem<String>> classDropdownItems = [];
+
+                      for (var classDoc in classes) {
+                        final classData = classDoc.data() as Map<String, dynamic>;
+                        final className = classData['name'] ?? '';
+                        final classId = classDoc.id;
+
+                        classDropdownItems.add(
+                          DropdownMenuItem<String>(
+                            value: classId,
+                            child: Text(className),
+                          ),
+                        );
+                      }
+
+                      return DropdownButtonFormField<String>(
+                        decoration: InputDecoration(labelText: 'الصف'),
+                        value: selectedClassId,
+                        items: classDropdownItems,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedClassId = value;
+                          });
+                        },
+                      );
+                    },
+                  ),
+                  TextFormField(
+                    controller: feesController,
+                    decoration: InputDecoration(labelText: 'الرسوم'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextFormField(
+                    controller: feesLeftController,
+                    decoration: InputDecoration(labelText: 'الرسوم المتبقية'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextFormField(
+                    controller: installmentsController,
+                    decoration: InputDecoration(labelText: 'الأقساط'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextFormField(
+                    controller: installmentsLeftController,
+                    decoration: InputDecoration(labelText: 'الأقساط المتبقية'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextFormField(
+                    controller: fatherController,
+                    decoration: InputDecoration(labelText: 'اسم الأب'),
+                  ),
+                  TextFormField(
+                    controller: fatherPhoneController,
+                    decoration: InputDecoration(labelText: 'هاتف الأب'),
+                  ),
+                  TextFormField(
+                    controller: motherController,
+                    decoration: InputDecoration(labelText: 'اسم الأم'),
+                  ),
+                  TextFormField(
+                    controller: motherPhoneController,
+                    decoration: InputDecoration(labelText: 'هاتف الأم'),
+                  ),
+                  TextFormField(
+                    controller: addressController,
+                    decoration: InputDecoration(labelText: 'العنوان'),
+                  ),
+                  TextFormField(
+                    controller: nearbyPhone1Controller,
+                    decoration: InputDecoration(labelText: 'هاتف قريب 1'),
+                  ),
+                  TextFormField(
+                    controller: nearbyPhone2Controller,
+                    decoration: InputDecoration(labelText: 'هاتف قريب 2'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final newStudentDocRef = await FirebaseFirestore.instance.collection('Students').add({
+                        'name': nameController.text,
+                        'birthday': birthdayController.text,
+                        'class': selectedClassId,
+                        'fees': double.parse(feesController.text),
+                        'feesLeft': double.parse(feesLeftController.text),
+                        'installments': double.parse(installmentsController.text),
+                        'installmentsLeft': double.parse(installmentsLeftController.text),
+                        'father': fatherController.text,
+                        'fatherPhone': fatherPhoneController.text,
+                        'mother': motherController.text,
+                        'motherPhone': double.parse(motherPhoneController.text),
+                        'address': addressController.text,
+                        'nearbyPhone1': double.parse(nearbyPhone1Controller.text),
+                        'nearbyPhone2': double.parse(nearbyPhone2Controller.text),
+                        'photoUrl': '', // سيتم تحديثها لاحقًا بعد رفع صورة الرمز الاستجابي
+                      });
+
+                      if (selectedClassId != null) {
+                        FirebaseFirestore.instance.collection('Classes').doc(selectedClassId!).update({
+                          'students': FieldValue.arrayUnion([nameController.text]),
                         });
+                      }
 
-                        if (newStudentDocRef != null) {
-                          final qrCodeImageUrl = await uploadQRCodeImage(newStudentDocRef.id);
+                      final qrCodeImageUrl = await uploadQRCodeImage(newStudentDocRef.id);
 
-                          if (qrCodeImageUrl != null) {
-                            await newStudentDocRef.update({'photoUrl': qrCodeImageUrl});
-                          } else {
-                            print('خطأ في رفع صورة الرمز الاستجابي للطالب الجديد.');
-                          }
+                      if (qrCodeImageUrl != null) {
+                        newStudentDocRef.update({'photoUrl': qrCodeImageUrl});
 
+                        setState(() {
                           nameController.clear();
                           birthdayController.clear();
+                          classController.clear();
                           feesController.clear();
                           feesLeftController.clear();
                           installmentsController.clear();
@@ -358,14 +398,16 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                           addressController.clear();
                           nearbyPhone1Controller.clear();
                           nearbyPhone2Controller.clear();
-                        } else {
-                          print('خطأ في إضافة الطالب الجديد إلى Firestore.');
-                        }
-                      },
-                      child: Text('إضافة طالب'),
-                    ),
-                  ],
-                ),
+                          selectedClassId = null;
+                        });
+                      } else {
+                        print('خطأ في رفع صورة الرمز الاستجابي.');
+                      }
+                    },
+                    child: Text('إضافة طالب جديد'),
+                  ),
+                ],
+              ),
               ],
             ),
           ),
