@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'Installments_Manage.dart';
 import 'attendanceReport.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
@@ -21,7 +22,7 @@ class ArchivedStudentsScreen extends StatelessWidget {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 183, 189, 0),
+                  color: Color.fromARGB(255, 0, 30, 57)
               ),
               child: Text(
                 'قائمة المشرف',
@@ -53,6 +54,16 @@ class ArchivedStudentsScreen extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              title: Text('إدارة الدفعات'),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => InstallmentsManageScreen(),
+                    ),
+                  );
+                },
+              ),
             ListTile(
               title: Text('تقرير المالية'),
               onTap: () {

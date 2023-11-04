@@ -34,7 +34,7 @@ class _userManagementScreenState extends State<userManagementScreen> {
             children: [
               DrawerHeader(
                 decoration: BoxDecoration(
-                color: Color.fromARGB(255, 183, 189, 0),
+                  color: Color.fromARGB(255, 0, 14, 57)
               ),
                 child: Text(
                   'قائمة الإدارة',
@@ -159,7 +159,7 @@ class _userManagementScreenState extends State<userManagementScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.edit),
+                                icon: Icon(Icons.edit, color: Colors.blue),
                                 onPressed: () {
                                   // قم بتعيين معرف المستخدم الذي يتم تحريره حاليًا
                                   setState(() {
@@ -173,7 +173,7 @@ class _userManagementScreenState extends State<userManagementScreen> {
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.delete),
+                                icon: Icon(Icons.delete,  color: Colors.red),
                                 onPressed: () {
                                   // حذف المستخدم من Firestore
                                   FirebaseFirestore.instance.collection('Users').doc(userId).delete();

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:printing/printing.dart';
+import 'package:flutter/services.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
+import 'Installments_Manage.dart';
 import 'archievedStudents.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
@@ -17,25 +22,24 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
   DateTime? selectedDate;
   String? selectedClass;
 
-  List<Map<String, String>> attendanceData = []; // قائمة لتخزين بيانات الحضور
+  List<Map<String, String>> attendanceData = [];
   EdgeInsets padding = EdgeInsets.symmetric(horizontal: 16.0);
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
-        textDirection: TextDirection.rtl, // Set textDirection to right-to-left (rtl)
+      textDirection: TextDirection.rtl,
       child: Scaffold(
-      appBar: AppBar(
-        title: Text('تقرير الحضور'),
-        //  // المحاذاة إلى اليمين
-      ),
-      drawer: Drawer(
+        appBar: AppBar(
+          title: Text('تقرير الحضور'),
+        ),
+        drawer: Drawer(
         child: ListView(
-          padding: padding,
+          padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 183, 189, 0),
+                  color: Color.fromARGB(255, 0, 30, 57)
               ),
               child: Text(
                 'قائمة المشرف',
@@ -67,6 +71,16 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
                 );
               },
             ),
+            ListTile(
+              title: Text('إدارة الدفعات'),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => InstallmentsManageScreen(),
+                    ),
+                  );
+                },
+              ),
             ListTile(
               title: Text('تقرير المالية'),
               onTap: () {
@@ -113,88 +127,93 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
           ],
         ),
       ),
-      body: Padding(
-  padding: const EdgeInsets.all(16.0),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: <Widget>[
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'اختر التاريخ:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            ElevatedButton(
-              onPressed: () => _selectDate(context),
-              child: Text(selectedDate != null
-                  ? "${selectedDate!.toLocal()}".split(' ')[0]
-                  : 'اختر تاريخًا'),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'اختر الصف:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                // المحاذاة إلى اليمين
-            ),
-            DropdownButton<String>(
-              value: selectedClass,
-              onChanged: (newValue) {
-                setState(() {
-                  selectedClass = newValue;
-                });
-              },
-              items: <String>['kg1', 'kg2', 'pre-kg']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (selectedDate != null && selectedClass != null) {
-                  _loadAttendanceData(selectedDate!, selectedClass!);
-                }
-              },
-              child: Text('تحميل بيانات الحضور'),
-            ),
-            SizedBox(height: 20),
-            // عرض بيانات الحضور هنا
-            if (attendanceData.isNotEmpty)
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     Text(
-                      'بيانات الحضور:',
+                      'اختر التاريخ:',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: attendanceData.length,
-                        itemBuilder: (context, index) {
-                          final studentData = attendanceData[index];
-                          return ListTile(
-                            title: Text('الطالب: ${studentData["studentName"]}'),
-                            subtitle: Text('الحالة: ${studentData["status"]}'),
-                          );
-                        },
-                      ),
                     ),
+                    ElevatedButton(
+                      onPressed: () => _selectDate(context),
+                      child: Text(selectedDate != null
+                          ? "${selectedDate!.toLocal()}".split(' ')[0]
+                          : 'اختر تاريخًا'),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'اختر الصف:',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    DropdownButton<String>(
+                      value: selectedClass,
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedClass = newValue;
+                        });
+                      },
+                      items: <String>['kg1', 'kg2', 'pre-kg']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (selectedDate != null && selectedClass != null) {
+                          _loadAttendanceData(selectedDate!, selectedClass!);
+                        }
+                      },
+                      child: Text('تحميل بيانات الحضور'),
+                    ),
+                    SizedBox(height: 20),
+                    if (attendanceData.isNotEmpty)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'بيانات الحضور:',
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (attendanceData.isNotEmpty) {
+                                  await _printAttendanceReport(attendanceData);
+                                }
+                              },
+                              child: Text('طباعة التقرير'),
+                            ),
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: attendanceData.length,
+                                itemBuilder: (context, index) {
+                                  final studentData = attendanceData[index];
+                                  return ListTile(
+                                    title: Text('الطالب: ${studentData["studentName"]}'),
+                                    subtitle: Text('الحالة: ${studentData["status"]}'),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ],
-  ),
-),
-
       ),
     );
   }
@@ -210,7 +229,7 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        attendanceData.clear(); // مسح بيانات الحضور الحالية
+        attendanceData.clear();
       });
     }
   }
@@ -222,9 +241,8 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
 
       if (classSnapshot.exists) {
         final students = classSnapshot['students'] as List<dynamic>;
-        return students.cast<String>(); // تحويلها إلى List<String>
+        return students.cast<String>();
       } else {
-        // التعامل مع حالة عدم وجود وثيقة الصف.
         return [];
       }
     } catch (e) {
@@ -234,7 +252,6 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
   }
 
   void _loadAttendanceData(DateTime date, String selectedClass) async {
-    // استعلام Firestore لجلب بيانات الحضور
     final formattedDate = '${date.year}-${date.month}-${date.day}';
     final query = _firestore.collection('Attendance').doc(formattedDate);
 
@@ -248,25 +265,20 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
             final attendanceDataList =
                 attendanceDataMap[selectedClass]['attendanceData'] as List<dynamic>;
 
-            // جلب الطلاب من مجموعة "الصفوف"
             final students = await fetchStudents(selectedClass);
 
-            // إنشاء خريطة لتتبع حالة حضور الطلاب
             Map<String, String> studentAttendance = {};
 
-            // تهيئة جميع الطلاب كغائبين
             for (var student in students) {
               studentAttendance[student] = 'غائب';
             }
 
-            // وضع علامات للطلاب كحاضرين
             for (var item in attendanceDataList) {
               final studentName = item['studentName'] as String;
               final status = item['status'] as String;
               studentAttendance[studentName] = status;
             }
 
-            // تحويل الخريطة إلى قائمة للعرض
             List<Map<String, String>> data = [];
             studentAttendance.forEach((studentName, status) {
               data.add({
@@ -279,7 +291,6 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
               attendanceData = data;
             });
           } else {
-            // التعامل مع حالة عدم وجود بيانات الصف المحدد في التاريخ المحدد.
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('لا توجد بيانات حضور متاحة للصف المحدد في هذا التاريخ.'),
@@ -287,7 +298,6 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
             );
           }
         } else {
-          // التعامل مع حالة عدم وجود وثيقة للتاريخ المحدد.
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('لا توجد بيانات حضور متاحة لهذا التاريخ. الوثيقة غير موجودة.'),
@@ -301,4 +311,61 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
       print('خطأ أثناء جلب الطلاب: $e');
     }
   }
+
+  Future<void> _printAttendanceReport(List<Map<String, String>> attendanceData) async {
+  final pdf = pw.Document();
+
+  final arabic = pw.Font.ttf(await rootBundle.load('assets/fonts/NotoKufiArabic-Regular.ttf'));
+  
+  final image = pw.MemoryImage(Uint8List.fromList((await rootBundle.load('images/stark.png')).buffer.asUint8List()));
+
+
+  pdf.addPage(
+    pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      textDirection: pw.TextDirection.rtl,
+      build: (pw.Context context) {
+        return pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.end, // Align content to the right
+
+            children: [
+         pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: [
+             pw.Container(
+                alignment: pw.Alignment.bottomLeft, // Align the image to the top-left
+                child: pw.Image(image, width: 150, height: 150),
+                  ),
+              pw.SizedBox(height: 20),
+            pw.Text(
+                    'بيانات الحضور:',
+              style: pw.TextStyle(fontSize: 20, font: arabic, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.SizedBox(height: 10),
+            for (var studentData in attendanceData)
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                children: [
+                  pw.Text(
+                    'الطالب: ${studentData['studentName']}',
+                    style: pw.TextStyle(fontSize: 20, font: arabic),
+                  ),
+                  pw.SizedBox(height: 10),
+                  pw.Text(
+                    'الحالة: ${studentData['status']}',
+                    style: pw.TextStyle(fontSize: 20, font: arabic),
+                  ),
+                  pw.SizedBox(height: 20),
+                ],
+              ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+  await Printing.layoutPdf(onLayout: (_) async => pdf.save());
+}
 }

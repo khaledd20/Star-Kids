@@ -51,7 +51,7 @@ class _InstallmentsScreenState extends State<InstallmentsScreen> {
             children: [
               DrawerHeader(
                 decoration: BoxDecoration(
-                color: Color.fromARGB(255, 183, 189, 0),
+                  color: Color.fromARGB(255, 0, 30, 57)
               ),
                 child: Text(
                   'قائمة المشرف',
@@ -243,7 +243,7 @@ class _InstallmentsScreenState extends State<InstallmentsScreen> {
                       final newFeesLeft = feesLeft - amount;
 
                       // Calculate the new installmentsLeft value
-                      final newInstallmentsLeft = installments - 1;
+                      final newInstallmentsLeft = installmentsLeft - 1;
 
                       // Update the feesLeft field in the Students collection
                       await studentSnapshot.docs[0].reference.update({'feesLeft': newFeesLeft});

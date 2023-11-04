@@ -28,8 +28,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         // Define the default brightness and colors.
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color.fromARGB(255, 183, 189, 0),
-          brightness: Brightness.dark,
+          seedColor:Color.fromARGB(255, 0, 14, 57),
+
+          brightness: Brightness.light,
         ),
         // Define the default `TextTheme`.
         textTheme: TextTheme(

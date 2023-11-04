@@ -1,6 +1,13 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import 'Installments_Manage.dart';
 import 'archievedStudents.dart';
 import 'attendanceReport.dart';
 import 'login_screen.dart';
@@ -21,95 +28,111 @@ class _FinanceReportScreenState extends State<FinanceReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl, // Set textDirection to right-to-left (rtl)
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
           title: Text('تقرير المالية'),
+          actions: [
+            ElevatedButton(
+              onPressed: _printFilteredDocuments,
+              child: Text('طياعة الفواتير'),
+            ),
+          ],
         ),
         drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                color: Color.fromARGB(255, 183, 189, 0),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 0, 30, 57)
               ),
-                child: Text(
-                  'قائمة المشرف',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
+              child: Text(
+                'قائمة المشرف',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
                 ),
               ),
-              ListTile(
-                title: Text('شاشة إدارة المستخدمين'),
+            ),
+            ListTile(
+              title: Text('شاشة إدارة المستخدمين'),
+              onTap: () {
+                // انتقل إلى شاشة إدارة المستخدمين
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => userManagementScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('شاشة إدارة الطلاب'),
+              onTap: () {
+                // انتقل إلى شاشة إدارة الطلاب
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => StudentManagementScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('إدارة الدفعات'),
                 onTap: () {
-                  // انتقل إلى شاشة إدارة المستخدمين
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => userManagementScreen(),
+                      builder: (context) => InstallmentsManageScreen(),
                     ),
                   );
                 },
               ),
-              ListTile(
-                title: Text('شاشة إدارة الطلاب'),
-                onTap: () {
-                  // انتقل إلى شاشة إدارة الطلاب
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => StudentManagementScreen(),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                title: Text('تقرير المالية'),
-                onTap: () {
-                  // انتقل إلى شاشة تقرير المالية
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => FinanceReportScreen(),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                title: Text('تقرير الحضور'),
-                onTap: () {
-                  // انتقل إلى شاشة تقرير الحضور
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => AttendanceReportScreen(),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                title: Text('الطلاب المؤرشفين'),
-                onTap: () {
-                  // انتقل إلى شاشة الطلاب المؤرشفين
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ArchivedStudentsScreen(),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                title: Text('تسجيل الخروج'),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
+            ListTile(
+              title: Text('تقرير المالية'),
+              onTap: () {
+                // انتقل إلى شاشة تقرير المالية
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => FinanceReportScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('تقرير الحضور'),
+              onTap: () {
+                // انتقل إلى شاشة تقرير الحضور
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AttendanceReportScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('الطلاب المؤرشفين'),
+              onTap: () {
+                // انتقل إلى شاشة الطلاب المؤرشفين
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ArchivedStudentsScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('تسجيل الخروج'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
+      ),
         body: Column(
           children: [
             _buildDateFilterRow(),
@@ -272,7 +295,128 @@ class _FinanceReportScreenState extends State<FinanceReportScreen> {
       return dateCondition && studentNameCondition;
     }).toList();
   }
+
+
+
+Future<void> _printFilteredDocuments() async {
+    final List<QueryDocumentSnapshot> documents = await _firestore.collection('Finance').get().then((value) => value.docs);
+
+    final pdf = pw.Document();
+
+    // Load the main Arabic font
+    // final font = await _loadArabicFont();
+
+    // Load an alternative font for unsupported characters (e.g., Arial Unicode MS)
+    final fontFallback = pw.Font.ttf(await rootBundle.load('fonts/NotoSans-Bold.ttf'));
+
+    final filteredDocuments = _filterDocuments(documents);
+
+    if (filteredDocuments.isEmpty) {
+      // No filtered documents to print
+      return;
+    }
+
+    final arabic = pw.Font.ttf(await rootBundle.load('/fonts/NotoKufiArabic-Regular.ttf'));
+
+    for (final document in filteredDocuments) {
+      final documentData = document.data() as Map<String, dynamic>;
+      final selectedClass = documentData['class'] ?? '';
+      final studentName = documentData['studentName'] ?? '';
+      final amount = documentData['amount'] ?? 0.0;
+      final date = documentData['date'] ?? '';
+      final receiptNumber = documentData['receiptNumber'] ?? '';
+      final image = pw.MemoryImage(Uint8List.fromList((await rootBundle.load('images/stark.png')).buffer.asUint8List()));
+
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          textDirection: pw.TextDirection.rtl,
+          build: (pw.Context context) {
+            return pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.end, // Align content to the right
+            children: [
+             pw.Center(
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                children: [
+                   pw.Container(
+                alignment: pw.Alignment.bottomLeft, // Align the image to the top-left
+                child: pw.Image(image, width: 150, height: 150),
+                  ),
+              pw.SizedBox(height: 20),
+                  // Arabic Text with reversed RTL text direction
+                  pw.Text(
+                    'الصف: $selectedClass',
+                    style: pw.TextStyle(fontSize: 20, font: arabic, fontFallback: [fontFallback]),
+                  ),
+                  pw.SizedBox(height: 10),
+
+                  // Arabic Text with reversed RTL text direction
+                  pw.Text(
+                    'اسم الطالب: $studentName',
+                    style: pw.TextStyle(fontSize: 20, font: arabic, fontFallback: [fontFallback]),
+                  ),
+                  pw.SizedBox(height: 10),
+
+                  // Arabic Text with reversed RTL text direction
+                  pw.Text(
+                    'المبلغ: $amount',
+                    style: pw.TextStyle(fontSize: 20, font: arabic, fontFallback: [fontFallback]),
+                  ),
+                  pw.SizedBox(height: 10),
+
+                  // Arabic Text with reversed RTL text direction
+                  pw.Text(
+                    'التاريخ: $date',
+                    style: pw.TextStyle(fontSize: 20, font: arabic, fontFallback: [fontFallback]),
+                  ),
+                  pw.SizedBox(height: 10),
+
+                  // Arabic Text with reversed RTL text direction
+                  pw.Text(
+                    'رقم الإيصال: $receiptNumber',
+                    style: pw.TextStyle(fontSize: 20, font: arabic, fontFallback: [fontFallback]),
+                  ),
+                  pw.SizedBox(height: 20),
+                ],
+              ),
+             ),
+             ],
+            );
+          },
+        ),
+      );
+    }
+
+    await Printing.layoutPdf(onLayout: (_) async => pdf.save());
+  }
+
+  List<QueryDocumentSnapshot> _filterDocuments(List<QueryDocumentSnapshot> documents) {
+    final fromDateCondition = fromDate ?? DateTime(2000);
+    final toDateCondition = toDate ?? DateTime(2101);
+
+    return documents.where((document) {
+      final documentData = document.data() as Map<String, dynamic>;
+
+      if (!documentData.containsKey('date') || !(documentData['date'] is String)) {
+        return false;
+      }
+
+      final dateStr = documentData['date'] as String;
+      final documentDate = DateTime.parse(dateStr);
+
+      final dateCondition =
+          documentDate.isAfter(fromDateCondition) && documentDate.isBefore(toDateCondition);
+
+      final studentNameCondition = studentNameFilter.isEmpty ||
+          (documentData['studentName'] as String).toLowerCase().contains(studentNameFilter.toLowerCase());
+
+      return dateCondition && studentNameCondition;
+    }).toList();
+  }
 }
+
+
 
 void main() {
   runApp(MaterialApp(

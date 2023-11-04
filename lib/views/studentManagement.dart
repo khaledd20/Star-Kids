@@ -8,7 +8,12 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:universal_html/html.dart' as html; // Import for web
+import 'package:printing/printing.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
+
+import 'Installments_Manage.dart';
 import 'archievedStudents.dart';
 import 'attendanceReport.dart';
 import 'financeReport.dart';
@@ -75,7 +80,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 183, 189, 0),
+                  color: Color.fromARGB(255, 0, 30, 57)
               ),
               child: Text(
                 'قائمة المشرف',
@@ -107,6 +112,16 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                   );
               },
             ),
+            ListTile(
+              title: Text('إدارة الدفعات'),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => InstallmentsManageScreen(),
+                    ),
+                  );
+                },
+              ),
             ListTile(
               title: Text('تقرير مالي'),
               onTap: () {
@@ -244,37 +259,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  FutureBuilder<Uint8List?>(
-                                  future: generateQRCode(studentId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                            ConnectionState.done &&
-                                        snapshot.data != null) {
-                                      if (html.window.navigator.userAgent.contains('Edge')) {
-                                        // Edge browser workaround
-                                        final url = Uri.dataFromBytes(
-                                          snapshot.data!,
-                                          mimeType: 'image/png',
-                                        ).toString();
-                                        return Image.network(
-                                          url,
-                                          width: 50, // Adjust the size as needed
-                                          height: 50,
-                                        );
-                                      } else {
-                                        return Image.memory(
-                                          snapshot.data!,
-                                          width: 50, // Adjust the size as needed
-                                          height: 50,
-                                        );
-                                      }
-                                    } else {
-                                      return CircularProgressIndicator();
-                                    }
-                                  },
-                                ),
+                                  
                                   IconButton(
-                                    icon: Icon(Icons.edit),
+                                    icon: Icon(Icons.edit,  color: Colors.blue),
                                    onPressed: () {
                                     setState(() {
                                       currentlyEditingStudentId = studentId;
@@ -299,7 +286,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.delete),
+                                    icon: Icon(Icons.delete , color: Colors.red),
                                     onPressed: () async {
                                       if (oldClassId != null) {
                                         await FirebaseFirestore.instance.collection('Classes').doc(oldClassId!).update({
@@ -311,11 +298,23 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                                     },
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.archive), // أضف أيقونة الأرشفة هنا
+                                    icon: Icon(Icons.archive,  color: Colors.green), // أضف أيقونة الأرشفة هنا
                                     onPressed: () async {
                                       await archiveStudent(studentId, studentData); // قم بأرشفة الطالب
                                     },
                                   ),
+                                   ElevatedButton(
+                                      onPressed: () {
+                                        _printQRCodeForStudent(studentId);
+                                      },
+                                      child: Text('طباعة الكود '),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        _printStudentDetails(studentData);
+                                      },
+                                      child: Text('طباعة التفاصيل'),
+                                    ),
                                 ],
                               ),
                             ],
@@ -655,6 +654,134 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
  }
 }
 
+Future<void> _printQRCodeForStudent(String studentId) async {
+  final pdf = pw.Document();
+
+  // Create a widget to display the QR code image
+  final qrCodeImage = pw.MemoryImage(
+    (await generateQRCode(studentId)).buffer.asUint8List(),
+  );
+
+  pdf.addPage(
+    pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      textDirection: pw.TextDirection.rtl,
+      build: (pw.Context context) {
+        return pw.Center(
+          child: pw.Image(qrCodeImage, width: 200, height: 200),
+        );
+      },
+    ),
+  );
+
+  await Printing.layoutPdf(onLayout: (_) async => pdf.save());
+}
+
+
+  Future<void> _printStudentDetails(Map<String, dynamic> studentData) async {
+  final pdf = pw.Document();
+
+  // Load the main Arabic font
+  final arabic = pw.Font.ttf(await rootBundle.load('assets/fonts/NotoKufiArabic-Regular.ttf'));
+
+    final image = pw.MemoryImage(Uint8List.fromList((await rootBundle.load('images/stark.png')).buffer.asUint8List()));
+
+  pdf.addPage(
+    pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      textDirection: pw.TextDirection.rtl,
+      build: (pw.Context context) {
+        return pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.end, // Align content to the right
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+
+            children: [
+         pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: [
+             pw.Container(
+                alignment: pw.Alignment.bottomLeft, // Align the image to the top-left
+                child: pw.Image(image, width: 150, height: 150),
+                  ),
+              pw.SizedBox(height: 20),
+            pw.Text(
+              'الصف: ${studentData['class']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'اسم الطالب: ${studentData['name']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'تاريخ الميلاد: ${studentData['birthday']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'الرسوم: ${studentData['fees']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'الرسوم المتبقية: ${studentData['feesLeft']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'الأقساط: ${studentData['installments']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'الأقساط المتبقية: ${studentData['installmentsLeft']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'اسم الأب: ${studentData['father']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'هاتف الأب: ${studentData['fatherPhone']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'اسم الأم: ${studentData['mother']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'هاتف الأم: ${studentData['motherPhone']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'العنوان: ${studentData['address']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'الهاتف القريب 1: ${studentData['nearbyPhone1']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+            pw.Text(
+              'الهاتف القريب 2: ${studentData['nearbyPhone2']}',
+              style: pw.TextStyle(fontSize: 20, font: arabic),
+            ),
+          ],
+         ),
+            ]
+        );
+      },
+    ),
+  );
+
+  await Printing.layoutPdf(onLayout: (_) async => pdf.save());
+}
 Future<void> deleteQRCodeImage(String studentId) async {
   try {
     final storageRef = FirebaseStorage.instanceFor(bucket: 'gs://star-kids-c24da.appspot.com').ref().child("QrCodes/$studentId.png");
