@@ -20,6 +20,7 @@ class _InstallmentsScreenState extends State<InstallmentsScreen> {
   final TextEditingController receiptNumberController = TextEditingController();
   DateTime? selectedDate;
   String? selectedClass;
+  String? selectedStudent; // Add selectedStudent variable
   List<String> studentList = [];
 
   Future<void> _selectDate(BuildContext context) async {
@@ -186,11 +187,11 @@ class _InstallmentsScreenState extends State<InstallmentsScreen> {
 
                     return DropdownButtonFormField<String>(
                       decoration: InputDecoration(labelText: 'اسم الطالب'),
-                      value: studentList.isNotEmpty ? studentList[0] : null,
+                      value: selectedStudent,
                       items: studentDropdownItems,
                       onChanged: (value) {
                         setState(() {
-                          studentNameController.text = value ?? '';
+                          selectedStudent = value ?? '';
                         });
                       },
                     );
@@ -220,7 +221,7 @@ class _InstallmentsScreenState extends State<InstallmentsScreen> {
                     // Save the installment data to Firestore in the "Finance" collection
                     await _firestore.collection('Finance').add({
                       'class': selectedClass,
-                      'studentName': studentList.isNotEmpty ? studentList[0] : '',
+                      'studentName': selectedStudent,
                       'amount': amount,
                       'date': date,
                       'receiptNumber': receiptNumber,
@@ -229,7 +230,7 @@ class _InstallmentsScreenState extends State<InstallmentsScreen> {
                     // Retrieve the student's data from the Students collection
                     final studentSnapshot = await _firestore
                         .collection('Students')
-                        .where('name', isEqualTo: studentList.isNotEmpty ? studentList[0] : '')
+                        .where('name', isEqualTo: selectedStudent)
                         .get();
 
                     if (studentSnapshot.docs.isNotEmpty) {
@@ -256,7 +257,7 @@ class _InstallmentsScreenState extends State<InstallmentsScreen> {
                         MaterialPageRoute(
                           builder: (context) => InstallmentReceiptScreen(
                             selectedClass: selectedClass ?? '', // Provide a default value
-                            studentName: studentList.isNotEmpty ? studentList[0] : '',
+                            studentName: selectedStudent ?? '',
                             amount: amount,
                             date: date,
                             receiptNumber: receiptNumber,

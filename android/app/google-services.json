@@ -45,9 +45,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:35723641214:android:a6cae971c9822a6d5b332f",
+        "mobilesdk_app_id": "1:35723641214:android:edcf7de00923efba5b332f",
         "android_client_info": {
-          "package_name": "com.example.my_flutter_project"
+          "package_name": "com.starkids.my_flutter_project"
         }
       },
       "oauth_client": [
