@@ -316,7 +316,7 @@ Future<void> _printFilteredDocuments() async {
       return;
     }
 
-    final arabic = pw.Font.ttf(await rootBundle.load('/fonts/NotoKufiArabic-Regular.ttf'));
+    final arabic = pw.Font.ttf(await rootBundle.load('assets/fonts/NotoKufiArabic-Regular.ttf'));
 
     for (final document in filteredDocuments) {
       final documentData = document.data() as Map<String, dynamic>;

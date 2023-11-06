@@ -76,6 +76,9 @@ flutter:
     - family: Cairo
       fonts:
         - asset: assets/fonts/NotoKufiArabic-Regular.ttf
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Bold.ttf
     
 
           
