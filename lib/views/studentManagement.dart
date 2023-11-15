@@ -45,6 +45,22 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
   final TextEditingController nearbyPhone1Controller = TextEditingController();
   final TextEditingController nearbyPhone2Controller = TextEditingController();
 
+
+  final TextEditingController editnameController = TextEditingController();
+  final TextEditingController editbirthdayController = TextEditingController();
+  final TextEditingController editclassController = TextEditingController();
+  final TextEditingController editfeesController = TextEditingController();
+  final TextEditingController editfeesLeftController = TextEditingController();
+  final TextEditingController editinstallmentsController = TextEditingController();
+  final TextEditingController editinstallmentsLeftController = TextEditingController();
+  final TextEditingController editfatherController = TextEditingController();
+  final TextEditingController editfatherPhoneController = TextEditingController();
+  final TextEditingController editmotherController = TextEditingController();
+  final TextEditingController editmotherPhoneController = TextEditingController();
+  final TextEditingController editaddressController = TextEditingController();
+  final TextEditingController editnearbyPhone1Controller = TextEditingController();
+  final TextEditingController editnearbyPhone2Controller = TextEditingController();
+
   String? currentlyEditingStudentId;
   String? selectedClassId;
   String? oldClassId;
@@ -268,20 +284,20 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                                       oldClassId = studentClass;
                                     });
 
-                                    nameController.text = studentName;
-                                    birthdayController.text = studentBirthday;
-                                    classController.text = studentClass;
-                                    feesController.text = studentFees.toString(); // Convert to string if necessary
-                                    feesLeftController.text = studentFeesLeft.toString(); // Convert to string if necessary
-                                    installmentsController.text = studentInstallments.toString();
-                                    installmentsLeftController.text = studentInstallmentsLeft.toString();
-                                    fatherController.text = father;
-                                    fatherPhoneController.text = fatherPhone;
-                                    motherController.text = mother;
-                                    motherPhoneController.text = motherPhone.toString();
-                                    addressController.text = address;
-                                    nearbyPhone1Controller.text = nearbyPhone1.toString();
-                                    nearbyPhone2Controller.text = nearbyPhone2.toString();
+                                    editnameController.text = studentName;
+                                    editbirthdayController.text = studentBirthday;
+                                    editclassController.text = studentClass;
+                                    editfeesController.text = studentFees.toString(); // Convert to string if necessary
+                                    editfeesLeftController.text = studentFeesLeft.toString(); // Convert to string if necessary
+                                    editinstallmentsController.text = studentInstallments.toString();
+                                    editinstallmentsLeftController.text = studentInstallmentsLeft.toString();
+                                    editfatherController.text = father;
+                                    editfatherPhoneController.text = fatherPhone;
+                                    editmotherController.text = mother;
+                                    editmotherPhoneController.text = motherPhone.toString();
+                                    editaddressController.text = address;
+                                    editnearbyPhone1Controller.text = nearbyPhone1.toString();
+                                    editnearbyPhone2Controller.text = nearbyPhone2.toString();
                                   },
 
                                   ),
@@ -334,11 +350,11 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                 title: Text('تعديل تفاصيل الطالب'),
                 children: [
                   TextFormField(
-                    controller: nameController,
+                    controller: editnameController,
                     decoration: InputDecoration(labelText: 'الاسم'),
                   ),
                   TextFormField(
-                    controller: birthdayController,
+                    controller: editbirthdayController,
                     decoration: InputDecoration(labelText: 'تاريخ الميلاد'),
                     onTap: () => _selectDate(context), // عرض منتقى التاريخ عند النقر
                   ),
@@ -378,51 +394,51 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                     },
                   ),
                   TextFormField(
-                    controller: feesController,
+                    controller: editfeesController,
                     decoration: InputDecoration(labelText: 'الرسوم'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
-                    controller: feesLeftController,
+                    controller: editfeesLeftController,
                     decoration: InputDecoration(labelText: 'الرسوم المتبقية'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
-                    controller: installmentsController,
+                    controller: editinstallmentsController,
                     decoration: InputDecoration(labelText: 'الأقساط'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
-                    controller: installmentsLeftController,
+                    controller: editinstallmentsLeftController,
                     decoration: InputDecoration(labelText: 'الأقساط المتبقية'),
                     keyboardType: TextInputType.number,
                   ),
                   TextFormField(
-                    controller: fatherController,
+                    controller: editfatherController,
                     decoration: InputDecoration(labelText: 'اسم الأب'),
                   ),
                   TextFormField(
-                    controller: fatherPhoneController,
+                    controller: editfatherPhoneController,
                     decoration: InputDecoration(labelText: 'هاتف الأب'),
                   ),
                   TextFormField(
-                    controller: motherController,
+                    controller: editmotherController,
                     decoration: InputDecoration(labelText: 'اسم الأم'),
                   ),
                   TextFormField(
-                    controller: motherPhoneController,
+                    controller: editmotherPhoneController,
                     decoration: InputDecoration(labelText: 'هاتف الأم'),
                   ),
                   TextFormField(
-                    controller: addressController,
+                    controller: editaddressController,
                     decoration: InputDecoration(labelText: 'العنوان'),
                   ),
                   TextFormField(
-                    controller: nearbyPhone1Controller,
+                    controller: editnearbyPhone1Controller,
                     decoration: InputDecoration(labelText: 'هاتف قريب 1'),
                   ),
                   TextFormField(
-                    controller: nearbyPhone2Controller,
+                    controller: editnearbyPhone2Controller,
                     decoration: InputDecoration(labelText: 'هاتف قريب 2'),
                   ),
                   ElevatedButton(
@@ -432,51 +448,51 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
 
                         if (qrCodeImageUrl != null) {
                           await FirebaseFirestore.instance.collection('Students').doc(currentlyEditingStudentId!).update({
-                            'name': nameController.text,
-                            'birthday': birthdayController.text,
+                            'name': editnameController.text,
+                            'birthday': editbirthdayController.text,
                             'class': selectedClassId,
-                            'fees': double.parse(feesController.text),
-                            'feesLeft': double.parse(feesLeftController.text),
-                            'installments': int.parse(installmentsController.text),
-                            'installmentsLeft': int.parse(installmentsLeftController.text),
-                            'father': fatherController.text,
-                            'fatherPhone': fatherPhoneController.text,
-                            'mother': motherController.text,
-                            'motherPhone': motherPhoneController.text,
-                            'address': addressController.text,
-                            'nearbyPhone1': nearbyPhone1Controller.text,
-                            'nearbyPhone2': nearbyPhone2Controller.text,
+                            'fees': double.parse(editfeesController.text),
+                            'feesLeft': double.parse(editfeesLeftController.text),
+                            'installments': int.parse(editinstallmentsController.text),
+                            'installmentsLeft': int.parse(editinstallmentsLeftController.text),
+                            'father': editfatherController.text,
+                            'fatherPhone': editfatherPhoneController.text,
+                            'mother': editmotherController.text,
+                            'motherPhone': editmotherPhoneController.text,
+                            'address': editaddressController.text,
+                            'nearbyPhone1': editnearbyPhone1Controller.text,
+                            'nearbyPhone2': editnearbyPhone2Controller.text,
                             'photoUrl': qrCodeImageUrl,
                           });
 
                           if (oldClassId != selectedClassId && oldClassId != null) {
                             FirebaseFirestore.instance.collection('Classes').doc(oldClassId!).update({
-                              'students': FieldValue.arrayRemove([nameController.text]),
+                              'students': FieldValue.arrayRemove([editnameController.text]),
                             });
                           }
 
                           if (selectedClassId != null) {
                             FirebaseFirestore.instance.collection('Classes').doc(selectedClassId!).update({
-                              'students': FieldValue.arrayUnion([nameController.text]),
+                              'students': FieldValue.arrayUnion([editnameController.text]),
                             });
                           }
 
                           setState(() {
                             currentlyEditingStudentId = null;
-                            nameController.clear();
-                            birthdayController.clear();
-                            classController.clear();
-                            feesController.clear();
-                            feesLeftController.clear();
-                            installmentsController.clear();
-                            installmentsLeftController.clear();
-                            fatherController.clear();
-                            fatherPhoneController.clear();
-                            motherController.clear();
-                            motherPhoneController.clear();
-                            addressController.clear();
-                            nearbyPhone1Controller.clear();
-                            nearbyPhone2Controller.clear();
+                            editnameController.clear();
+                            editbirthdayController.clear();
+                            editclassController.clear();
+                            editfeesController.clear();
+                            editfeesLeftController.clear();
+                            editinstallmentsController.clear();
+                            editinstallmentsLeftController.clear();
+                            editfatherController.clear();
+                            editfatherPhoneController.clear();
+                            editmotherController.clear();
+                            editmotherPhoneController.clear();
+                            editaddressController.clear();
+                            editnearbyPhone1Controller.clear();
+                            editnearbyPhone2Controller.clear();
                             selectedClassId = null;
                             oldClassId = null;
                           });
@@ -692,12 +708,11 @@ Future<void> _printQRCodeForStudent(String studentId) async {
       textDirection: pw.TextDirection.rtl,
       build: (pw.Context context) {
         return pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.end, // Align content to the right
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            mainAxisAlignment: pw.MainAxisAlignment.start, // Align content to the right
 
             children: [
          pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.end,
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
              pw.Container(
                 alignment: pw.Alignment.bottomLeft, // Align the image to the top-left

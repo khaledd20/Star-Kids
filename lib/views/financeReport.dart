@@ -6,6 +6,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart' as intl;
+
 
 import 'Installments_Manage.dart';
 import 'archievedStudents.dart';
@@ -21,6 +23,7 @@ class FinanceReportScreen extends StatefulWidget {
 
 class _FinanceReportScreenState extends State<FinanceReportScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+   final intl.DateFormat _dateFormat = intl.DateFormat('dd/MM/yyyy'); // Added date format
   DateTime? fromDate;
   DateTime? toDate;
   String studentNameFilter = '';
@@ -35,7 +38,7 @@ class _FinanceReportScreenState extends State<FinanceReportScreen> {
           actions: [
             ElevatedButton(
               onPressed: _printFilteredDocuments,
-              child: Text('طياعة الفواتير'),
+              child: Text('طباعة الفواتير'),
             ),
           ],
         ),
@@ -284,15 +287,17 @@ class _FinanceReportScreenState extends State<FinanceReportScreen> {
       }
 
       final dateStr = installmentData['date'] as String;
-      final installmentDate = DateTime.parse(dateStr);
+      try {
+        final installmentDate = _dateFormat.parse(dateStr);
+        final dateCondition = installmentDate.isAfter(fromDateCondition) && installmentDate.isBefore(toDateCondition);
+        final studentNameCondition = studentNameFilter.isEmpty ||
+            (installmentData['studentName'] as String).toLowerCase().contains(studentNameFilter.toLowerCase());
 
-      final dateCondition =
-          installmentDate.isAfter(fromDateCondition) && installmentDate.isBefore(toDateCondition);
-
-      final studentNameCondition = studentNameFilter.isEmpty ||
-          (installmentData['studentName'] as String).toLowerCase().contains(studentNameFilter.toLowerCase());
-
-      return dateCondition && studentNameCondition;
+        return dateCondition && studentNameCondition;
+      } catch (e) {
+        // Handle the error or ignore the entry
+        return false;
+      }
     }).toList();
   }
 
@@ -333,11 +338,11 @@ Future<void> _printFilteredDocuments() async {
           textDirection: pw.TextDirection.rtl,
           build: (pw.Context context) {
             return pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.end, // Align content to the right
+            mainAxisAlignment: pw.MainAxisAlignment.start, // Align content to the right
             children: [
              pw.Center(
               child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                    pw.Container(
                 alignment: pw.Alignment.bottomLeft, // Align the image to the top-left
@@ -403,18 +408,21 @@ Future<void> _printFilteredDocuments() async {
       }
 
       final dateStr = documentData['date'] as String;
-      final documentDate = DateTime.parse(dateStr);
+      try {
+        final documentDate = _dateFormat.parse(dateStr);
+        final dateCondition = documentDate.isAfter(fromDateCondition) && documentDate.isBefore(toDateCondition);
+        final studentNameCondition = studentNameFilter.isEmpty ||
+            (documentData['studentName'] as String).toLowerCase().contains(studentNameFilter.toLowerCase());
 
-      final dateCondition =
-          documentDate.isAfter(fromDateCondition) && documentDate.isBefore(toDateCondition);
-
-      final studentNameCondition = studentNameFilter.isEmpty ||
-          (documentData['studentName'] as String).toLowerCase().contains(studentNameFilter.toLowerCase());
-
-      return dateCondition && studentNameCondition;
+        return dateCondition && studentNameCondition;
+      } catch (e) {
+        // Handle the error or ignore the entry
+        return false;
+      }
     }).toList();
   }
 }
+
 
 
 

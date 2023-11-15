@@ -442,10 +442,10 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
       textDirection: pw.TextDirection.rtl,
       build: (pw.Context context) {
         return pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.end, // Align content to the right
+            mainAxisAlignment: pw.MainAxisAlignment.start, // Align content to the right
             children: [
          pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
              pw.Container(
                 alignment: pw.Alignment.bottomLeft, // Align the image to the top-left
