@@ -4,6 +4,7 @@ import 'Installments_Manage.dart';
 import 'attendanceReport.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
+import 'statistics.dart';
 import 'studentManagement.dart';
 import 'userManagement.dart';
 
@@ -50,6 +51,17 @@ class ArchivedStudentsScreen extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => StudentManagementScreen(),
+                  ),
+                );
+              },
+            ),
+             ListTile(
+              title: Text('احصائيات الطلاب'),
+              onTap: () {
+                // انتقل إلى شاشة إدارة الطلاب
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsScreen(),
                   ),
                 );
               },
@@ -187,9 +199,17 @@ class ArchivedStudentsScreen extends StatelessWidget {
     try {
       // إنشاء مرجع إلى مجموعة "الطلاب"
       final studentsCollection = FirebaseFirestore.instance.collection('Students');
+      final studentClassId = studentData['class'];
 
       // أضف بيانات الطالب إلى مجموعة "الطلاب"
       await studentsCollection.doc(studentId).set(studentData);
+
+
+      if (studentClassId != null) {
+    await FirebaseFirestore.instance.collection('Classes').doc(studentClassId).update({
+        'students': FieldValue.arrayUnion([studentData['name']]),
+    });
+}
 
       // احذف الطالب من مجموعة "Archived"
       await FirebaseFirestore.instance.collection('Archived').doc(studentId).delete();

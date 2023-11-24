@@ -5,6 +5,7 @@ import 'archievedStudents.dart';
 import 'attendanceReport.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
+import 'statistics.dart';
 import 'studentManagement.dart';
 import 'userManagement.dart';
 
@@ -15,6 +16,7 @@ class InstallmentsManageScreen extends StatefulWidget {
 
 class _InstallmentsManageScreenState extends State<InstallmentsManageScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String studentNameFilter = ''; // Add this variable for filtering by student name
 
   void _showInstallmentForm({DocumentSnapshot? installmentData}) async {
     final result = await showDialog<Map<String, dynamic>?>(
@@ -24,10 +26,8 @@ class _InstallmentsManageScreenState extends State<InstallmentsManageScreen> {
 
     if (result != null) {
       if (installmentData != null) {
-        // Edit installment
         _firestore.collection('Finance').doc(installmentData.id).update(result);
       } else {
-        // Add new installment
         _firestore.collection('Finance').add(result);
       }
     }
@@ -58,15 +58,36 @@ class _InstallmentsManageScreenState extends State<InstallmentsManageScreen> {
     );
   }
 
+  // Widget for filtering by student name
+  Widget _buildStudentNameFilterRow() {
+    return Row(
+      children: [
+        Text('اسم الطالب: '),
+        Expanded(
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                studentNameFilter = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'أدخل اسم الطالب',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-      appBar: AppBar(
-        title: Text('إدارة الدفعات'),
-      ),
-      drawer: Drawer(
+        appBar: AppBar(
+          title: Text('إدارة الدفعات'),
+        ),
+        drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -100,6 +121,17 @@ class _InstallmentsManageScreenState extends State<InstallmentsManageScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => StudentManagementScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('احصائيات الطلاب'),
+              onTap: () {
+                // انتقل إلى شاشة إدارة الطلاب
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsScreen(),
                   ),
                 );
               },
@@ -157,56 +189,80 @@ class _InstallmentsManageScreenState extends State<InstallmentsManageScreen> {
                 );
               },
             ),
+            
           ],
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('Finance').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          }
+        body: Column(
+          children: [
+            _buildStudentNameFilterRow(), // Add the student name filter widget
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore.collection('Finance').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
 
-          final installments = snapshot.data!.docs;
+                  final installments = snapshot.data!.docs;
 
-          if (installments.isEmpty) {
-            return Center(child: Text('لا توجد دفعات متاحة.'));
-          }
+                  if (installments.isEmpty) {
+                    return Center(child: Text('لا توجد دفعات متاحة.'));
+                  }
 
-          return ListView.builder(
-            itemCount: installments.length,
-            itemBuilder: (context, index) {
-              final installmentData = installments[index].data() as Map<String, dynamic>;
+                  // Filter installments by student name
+                  final filteredInstallments = installments.where((installment) {
+                    final studentName =
+                        (installment.data() as Map<String, dynamic>)['studentName'].toString().toLowerCase();
+                    return studentName.contains(studentNameFilter.toLowerCase());
+                  }).toList();
 
-              return ListTile(
-                title: Text(installmentData['studentName'] ?? ''),
-                subtitle: Text(installmentData['amount'].toString()),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit, color: Colors.blue),
-                      onPressed: () => _showInstallmentForm(installmentData: installments[index]),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteInstallment(installments[index].id),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showInstallmentForm(),
-        child: Icon(Icons.add),
-      ),
+                  return ListView.builder(
+                    itemCount: filteredInstallments.length,
+                    itemBuilder: (context, index) {
+                      final installmentData = filteredInstallments[index].data() as Map<String, dynamic>;
+
+                      final divider = Divider();
+
+                      return Column(
+                        children: [
+                          ListTile(
+                            title: Text(installmentData['studentName'] ?? ''),
+                            subtitle: Text(installmentData['amount'].toString()),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit, color: Colors.blue),
+                                  onPressed: () =>
+                                      _showInstallmentForm(installmentData: filteredInstallments[index]),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () => _deleteInstallment(filteredInstallments[index].id),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (index < filteredInstallments.length - 1) divider,
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _showInstallmentForm(),
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }
 }
+
 
 class InstallmentFormScreen extends StatelessWidget {
   final Map<String, dynamic>? installmentData;

@@ -18,6 +18,7 @@ import 'archievedStudents.dart';
 import 'attendanceReport.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
+import 'statistics.dart';
 import 'userManagement.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -81,6 +82,30 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
       });
   }
 
+
+    String studentNameFilter = ''; // Add this variable for filtering by student name
+
+   // Widget for filtering by student name
+  Widget _buildStudentNameFilterRow() {
+    return Row(
+      children: [
+        Text('اسم الطالب: '),
+        Expanded(
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                studentNameFilter = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'أدخل اسم الطالب',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -126,6 +151,17 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                     builder: (context) => StudentManagementScreen(),
                     ),
                   );
+              },
+            ),
+             ListTile(
+              title: Text('احصائيات الطلاب'),
+              onTap: () {
+                // انتقل إلى شاشة إدارة الطلاب
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsScreen(),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -199,6 +235,7 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                 'الطلاب:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
+               _buildStudentNameFilterRow(), // Add the student name filter widget
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance.collection('Students').snapshots(),
                 builder: (context, snapshot) {
@@ -226,6 +263,9 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                       final address = studentData['address'] ?? '';
                       final nearbyPhone1 = studentData['nearbyPhone1'] ?? '';
                       final nearbyPhone2 = studentData['nearbyPhone2'] ?? '';
+                      if (!studentName.toLowerCase().contains(studentNameFilter.toLowerCase())) {
+                          return Container(); // Return an empty container to hide the student
+                        }
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -331,6 +371,8 @@ class _StudentManagementScreenState extends State<StudentManagementScreen> {
                                       },
                                       child: Text('طباعة التفاصيل'),
                                     ),
+                                    // Filter students by name
+                        
                                 ],
                               ),
                             ],
@@ -873,13 +915,19 @@ Future<void> archiveStudent(String studentId, Map<String, dynamic> studentData) 
   try {
     // إنشاء مرجع للمجموعة المؤرشفة
     final archivedCollection = FirebaseFirestore.instance.collection('Archived');
+    final studentClassId = studentData['class'];
 
     // إضافة بيانات الطالب إلى مجموعة "المؤرشفة"
     await archivedCollection.doc(studentId).set(studentData);
 
     // حذف الطالب من مجموعة "الطلاب"
     await FirebaseFirestore.instance.collection('Students').doc(studentId).delete();
-
+     // Remove student's name from the class in the Classes collection
+    if (studentClassId != null) {
+      await FirebaseFirestore.instance.collection('Classes').doc(studentClassId).update({
+        'students': FieldValue.arrayRemove([studentData['name']]),
+      });
+    }
     // حذف صورة الرمز الاستجابي
     await deleteQRCodeImage(studentId);
   } catch (e) {

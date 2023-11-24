@@ -9,6 +9,7 @@ import 'Installments_Manage.dart';
 import 'archievedStudents.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
+import 'statistics.dart';
 import 'studentManagement.dart';
 import 'userManagement.dart';
 
@@ -67,6 +68,17 @@ class _AttendanceReportScreenState extends State<AttendanceReportScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => StudentManagementScreen(),
+                  ),
+                );
+              },
+            ),
+             ListTile(
+              title: Text('احصائيات الطلاب'),
+              onTap: () {
+                // انتقل إلى شاشة إدارة الطلاب
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsScreen(),
                   ),
                 );
               },

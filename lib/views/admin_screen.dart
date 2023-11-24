@@ -6,6 +6,7 @@ import 'archievedStudents.dart';
 import 'attendanceReport.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
+import 'statistics.dart';
 import 'studentManagement.dart';
 import 'userManagement.dart';
 
@@ -57,6 +58,17 @@ class _AdminScreenState extends State<adminScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => StudentManagementScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('احصائيات الطلاب'),
+              onTap: () {
+                // انتقل إلى شاشة إدارة الطلاب
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsScreen(),
                   ),
                 );
               },

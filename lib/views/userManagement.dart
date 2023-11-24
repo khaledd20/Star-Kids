@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'Installments_Manage.dart';
 import 'archievedStudents.dart';
 import 'attendanceReport.dart';
 import 'financeReport.dart';
 import 'login_screen.dart';
+import 'statistics.dart';
 import 'studentManagement.dart';
 
 class userManagementScreen extends StatefulWidget {
@@ -29,89 +31,110 @@ class _userManagementScreenState extends State<userManagementScreen> {
           title: Text('إدارة المستخدمين'),
         ),
         drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 0, 14, 57)
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 0, 30, 57)
               ),
-                child: Text(
-                  'قائمة الإدارة',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
+              child: Text(
+                'قائمة المشرف',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
                 ),
               ),
-              ListTile(
-                title: Text('شاشة إدارة المستخدمين'),
+            ),
+            ListTile(
+              title: Text('شاشة إدارة المستخدمين'),
+              onTap: () {
+                // انتقل إلى شاشة إدارة المستخدمين
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => userManagementScreen(),
+                    ),
+                  );
+              },
+            ),
+            ListTile(
+              title: Text('شاشة إدارة الطلاب'),
+              onTap: () {
+                // انتقل إلى شاشة إدارة الطلاب
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => StudentManagementScreen(),
+                    ),
+                  );
+              },
+            ),
+             ListTile(
+              title: Text('احصائيات الطلاب'),
+              onTap: () {
+                // انتقل إلى شاشة إدارة الطلاب
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('إدارة الدفعات'),
                 onTap: () {
-                  // انتقل إلى شاشة إدارة المستخدمين
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => userManagementScreen(),
+                      builder: (context) => InstallmentsManageScreen(),
                     ),
                   );
                 },
               ),
-              ListTile(
-                title: Text('شاشة إدارة الطلاب'),
-                onTap: () {
-                  // انتقل إلى شاشة إدارة الطلاب
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => StudentManagementScreen(),
+            ListTile(
+              title: Text('تقرير مالي'),
+              onTap: () {
+                // انتقل إلى شاشة التقرير المالي
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => FinanceReportScreen(),
                     ),
                   );
-                },
-              ),
-              ListTile(
-                title: Text('تقرير مالي'),
-                onTap: () {
-                  // انتقل إلى تقرير مالي
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => FinanceReportScreen(),
+              },
+            ),
+            ListTile(
+              title: Text('تقرير الحضور'),
+              onTap: () {
+                // انتقل إلى شاشة تقرير الحضور
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AttendanceReportScreen(),
                     ),
                   );
-                },
-              ),
-              ListTile(
-                title: Text('تقرير الحضور'),
-                onTap: () {
-                  // انتقل إلى تقرير الحضور
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => AttendanceReportScreen(),
+              },
+            ),
+            ListTile(
+              title: Text('الطلاب المؤرشفين'),
+              onTap: () {
+                // انتقل إلى شاشة الطلاب المؤرشفين
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ArchivedStudentsScreen(),
                     ),
                   );
-                },
-              ),
-              ListTile(
-                title: Text('الطلاب المؤرشفين'),
-                onTap: () {
-                  // انتقل إلى الطلاب المؤرشفين
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ArchivedStudentsScreen(),
+              },
+            ),
+            ListTile(
+              title: Text('تسجيل الخروج'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
                     ),
                   );
-                },
-              ),
-              ListTile(
-                title: Text('تسجيل الخروج'),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
+              },
+            ),
+          ],
         ),
+      ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
