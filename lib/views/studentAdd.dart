@@ -57,6 +57,30 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
       });
   }
 
+
+  String studentNameFilter = ''; // Add this variable for filtering by student name
+
+   // Widget for filtering by student name
+  Widget _buildStudentNameFilterRow() {
+    return Row(
+      children: [
+        Text('اسم الطالب: '),
+        Expanded(
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                studentNameFilter = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'أدخل اسم الطالب',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -139,6 +163,7 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                   'الطلاب:',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
+                _buildStudentNameFilterRow(),
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('Students')
@@ -172,6 +197,9 @@ class _StudentAddingScreenState extends State<StudentAddingScreen> {
                         final address = studentData['address'] ?? '';
                         final nearbyPhone1 = studentData['nearbyPhone1'] ?? '';
                         final nearbyPhone2 = studentData['nearbyPhone2'] ?? '';
+                        if (!studentName.toLowerCase().contains(studentNameFilter.toLowerCase())) {
+                          return Container(); // Return an empty container to hide the student
+                        }
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
